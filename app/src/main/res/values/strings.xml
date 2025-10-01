@@ -7,4 +7,13 @@
     <string name="title_add_invoice">Thêm Hóa Đơn</string>
     <string name="title_array_invoice">Danh Sách Hóa Đơn</string>
     <string name="title_report">Báo Cáo</string>
+    <string name="action_set_image">Chọn ảnh</string>
+    <string name="hint_name_flower">Nhập tên hoa</string>
+    <string name="name_flower">Tên hoa:</string>
+    <string name="hint_price">Nhập giá bán(k)</string>
+    <string name="price">Giá bán:</string>
+    <string name="hint_price_in">Nhập giá nhập(k)</string>
+    <string name="price_in">Giá nhập:</string>
+    <string name="action_save_flower">Lưu hoa</string>
+    <string name="title_edit_flower">Sửa Hoa</string>
 </resources>
