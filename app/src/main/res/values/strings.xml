@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Quản Lí Bán Hoa</string>
+    <string name="title_add_flower">Thêm Hoa</string>
+    <string name="title_array_flower">Danh Sách Hoa</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_add_invoice">Thêm Hóa Đơn</string>
+    <string name="title_array_invoice">Danh Sách Hóa Đơn</string>
+    <string name="title_report">Báo Cáo</string>
+</resources>
