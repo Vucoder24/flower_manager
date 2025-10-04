@@ -9,6 +9,7 @@ import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import com.example.quanlibanhoa.data.entity.Flower
 import com.example.quanlibanhoa.data.entity.Invoice
+import com.example.quanlibanhoa.data.entity.InvoiceDetail
 import com.example.quanlibanhoa.data.repository.AppRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,18 +17,30 @@ import kotlinx.coroutines.launch
 class InvoiceViewModel(
     private val repository: AppRepository
 ): ViewModel() {
-    private val _invoiceState = MutableLiveData<State>()
-    var invoiceState: LiveData<State> = _invoiceState
+    private val _addInvoiceState = MutableLiveData<StateInvoice>().apply {
+        value = StateInvoice.IDLE // init về IDLE
+    }
+    val addInvoiceState: LiveData<StateInvoice> = _addInvoiceState.distinctUntilChanged()
+
+    private val _editInvoiceState = MutableLiveData<StateInvoice>().apply {
+        value = StateInvoice.IDLE // init về IDLE
+    }
+    val editInvoiceState: LiveData<StateInvoice> = _editInvoiceState.distinctUntilChanged()
+
+    private val _deleteInvoiceState = MutableLiveData<StateInvoice>().apply {
+        value = StateInvoice.IDLE // init về IDLE
+    }
+    val deleteInvoiceState: LiveData<StateInvoice> = _deleteInvoiceState.distinctUntilChanged()
 
     val invoiceStateList: LiveData<List<Invoice>> = repository.getAllInvoices().distinctUntilChanged()
 
-    fun addFlower(flower: Flower) {
+    fun addInvoiceWithDetail(invoice: Invoice, details: List<InvoiceDetail>) {
         viewModelScope.launch(Dispatchers.IO){
             try {
-                repository.insertFlower(flower)
-                _invoiceState.postValue(State.ADD_SUCCESS)
+                repository.insertInvoiceWithDetails(invoice, details)
+                _addInvoiceState.postValue(StateInvoice.ADD_INVOICE_SUCCESS)
             }catch (e: Exception){
-                _invoiceState.postValue(State.ADD_ERROR)
+                _addInvoiceState.postValue(StateInvoice.ADD_INVOICE_ERROR)
             }
         }
     }
@@ -36,9 +49,9 @@ class InvoiceViewModel(
         viewModelScope.launch(Dispatchers.IO){
             try {
                 repository.updateFlower(flower)
-                _invoiceState.postValue(State.EDIT_SUCCESS)
+                _editInvoiceState.postValue(StateInvoice.EDIT_INVOICE_SUCCESS)
             }catch (e: Exception){
-                _invoiceState.postValue(State.EDIT_ERROR)
+                _editInvoiceState.postValue(StateInvoice.EDIT_INVOICE_ERROR)
             }
         }
     }
@@ -47,12 +60,35 @@ class InvoiceViewModel(
         viewModelScope.launch(Dispatchers.IO){
             try {
                 repository.deleteFlower(flower)
-                _invoiceState.postValue(State.DELETE_SUCCESS)
+                _deleteInvoiceState.postValue(StateInvoice.DELETE_INVOICE_SUCCESS)
             }catch (e: Exception){
-                _invoiceState.postValue(State.DELETE_ERROR)
+                _deleteInvoiceState.postValue(StateInvoice.DELETE_INVOICE_ERROR)
             }
         }
     }
+
+    fun resetAddState() {
+        _addInvoiceState.value = StateInvoice.IDLE
+    }
+
+    fun resetEditState() {
+        _editInvoiceState.value = StateInvoice.IDLE
+    }
+
+    fun resetDeleteState() {
+        _deleteInvoiceState.value = StateInvoice.IDLE
+    }
+
+}
+
+enum class StateInvoice {
+    IDLE,
+    ADD_INVOICE_SUCCESS,
+    ADD_INVOICE_ERROR,
+    EDIT_INVOICE_SUCCESS,
+    EDIT_INVOICE_ERROR,
+    DELETE_INVOICE_SUCCESS,
+    DELETE_INVOICE_ERROR
 }
 
 class InvoiceViewModelFactory(

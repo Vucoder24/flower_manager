@@ -2,6 +2,7 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.QuảnLíBánHoa" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+         <item name="colorPrimary">@color/my_light_primary</item>
     </style>
+    <color name="my_light_primary">#D0BCFF</color>
 </resources>

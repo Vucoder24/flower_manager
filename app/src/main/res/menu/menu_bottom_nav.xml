@@ -9,7 +9,7 @@
 
     <item android:title="@string/title_add_flower"
         android:id="@+id/add_flower"
-        android:icon="@drawable/ic_add"
+        android:icon="@drawable/ic_add_flower"
         app:iconSize="24dp" />
 
     <item android:title="@string/title_add_invoice"

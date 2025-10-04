@@ -6,13 +6,18 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.quanlibanhoa.data.dao.FlowerDao
 import com.example.quanlibanhoa.data.dao.InvoiceDao
+import com.example.quanlibanhoa.data.dao.InvoiceDetailDao
+import com.example.quanlibanhoa.data.dao.InvoiceWithDetailsDao
 import com.example.quanlibanhoa.data.entity.Flower
 import com.example.quanlibanhoa.data.entity.Invoice
+import com.example.quanlibanhoa.data.entity.InvoiceDetail
 
-@Database(entities = [Flower::class, Invoice::class], version = 1)
+@Database(entities = [Flower::class, Invoice::class, InvoiceDetail::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun flowerDao(): FlowerDao
     abstract fun invoiceDao(): InvoiceDao
+    abstract fun invoiceDetailDao(): InvoiceDetailDao
+    abstract fun invoiceWithDetailsDao(): InvoiceWithDetailsDao
 
     companion object {
         @Volatile

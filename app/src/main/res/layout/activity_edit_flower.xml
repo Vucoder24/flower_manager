@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="8dp"
                 android:gravity="center"
-                android:paddingEnd="30dp"
+                android:paddingEnd="26dp"
                 android:paddingStart="0dp"
                 android:textStyle="bold"
                 android:textColor="@color/my_light_primary"

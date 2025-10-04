@@ -10,10 +10,10 @@ data class Invoice(
     val tenKhach: String,
     val sdt: String?,
     val diaChi: String?,
-    val danhSachHoa: String,   // ví dụ: "Hồng(2), Huệ(4)"
-    val tongSoLuong: Int,      // tổng bó hoa
-    val tongTienThu: Double,   // tổng tiền bán
-    val tongLoiNhuan: Double,  // tổng lợi nhuận
+    val tongSoLuong: Int,
+    val giamGia: Int,
+    val tongTienThu: Double,
+    val tongLoiNhuan: Double,
     val createdAt: Long = Date().time
 )
 

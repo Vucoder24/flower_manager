@@ -7,17 +7,21 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quanlibanhoa.R
 import com.example.quanlibanhoa.data.entity.Flower
+import com.example.quanlibanhoa.utils.loadImageFromUri
 
 class FlowerListAdapter(
     private val onEdit: (Flower) -> Unit,
-    private val onDelete: (Flower) -> Unit
+    @Suppress("unused") private val onDeleteSelected: (List<Flower>) -> Unit, // Hàm xóa mới
+    private val onMultiSelectModeChanged: (Boolean) -> Unit, // Báo cho Fragment biết chế độ đã thay đổi
+    private val onSelectionCountChanged: (Int) -> Unit // Báo số lượng item đã chọn
 ) : RecyclerView.Adapter<FlowerListAdapter.ViewHolder>() {
 
     private val flowers = mutableListOf<Flower>()
+    val selectedFlowers = mutableSetOf<Flower>() // Dùng Set để quản lý các mục đã chọn
+    var isMultiSelectMode = false // Trạng thái chế độ chọn
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(data: List<Flower>) {
@@ -27,12 +31,12 @@ class FlowerListAdapter(
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val cbSelect: android.widget.CheckBox = view.findViewById(R.id.cbSelect)
         val imgFlower: ImageView = view.findViewById(R.id.imgFlower)
         val txtName: TextView = view.findViewById(R.id.txtName)
         val txtPrice: TextView = view.findViewById(R.id.txtPrice)
         val txtPriceIn: TextView = view.findViewById(R.id.txtPriceIn)
         val btnEdit: ImageButton = view.findViewById(R.id.btnEdit)
-        val btnDelete: ImageButton = view.findViewById(R.id.btnDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -47,19 +51,78 @@ class FlowerListAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val flower = flowers[position]
         holder.txtName.text = flower.tenHoa
-        holder.txtPriceIn.text = "Giá nhập: ${flower.giaNhap.toInt()}"
-        holder.txtPrice.text = "Giá bán: ${flower.giaBan.toInt()}"
+        holder.txtPriceIn.text = "Giá nhập: ${flower.giaNhap.toInt()}k"
+        holder.txtPrice.text = "Giá bán: ${flower.giaBan.toInt()}k"
+        holder.imgFlower.loadImageFromUri(flower.hinhAnh)
 
-        if (flower.hinhAnh != null) {
-            holder.imgFlower.setImageURI(flower.hinhAnh.toUri())
+        // 2. Trạng thái giao diện
+        if (isMultiSelectMode) {
+            holder.cbSelect.visibility = View.VISIBLE
+            holder.btnEdit.visibility = View.GONE
+            holder.cbSelect.isChecked = selectedFlowers.contains(flower)
         } else {
-            holder.imgFlower.setImageResource(R.drawable.ic_photo)
+            holder.cbSelect.visibility = View.GONE
+            holder.btnEdit.visibility = View.VISIBLE
         }
 
-        holder.btnEdit.setOnLongClickListener {
-            onEdit(flower)
-            true
+        // 3. Sự kiện
+        holder.btnEdit.setOnClickListener { onEdit(flower) } // CHUYỂN longClick thành click
+
+        // Long Click: Bật chế độ chọn
+        holder.itemView.setOnLongClickListener {
+            if (!isMultiSelectMode) {
+                setMultiSelectMode(true) // Bật chế độ chọn
+                toggleSelection(flower)   // Tự động chọn item này
+                true
+            } else {
+                false // Cho phép click thường tiếp tục (xử lý ở dưới)
+            }
         }
-        holder.btnDelete.setOnClickListener { onDelete(flower) }
+        // Click thường: Chọn/bỏ chọn nếu đang ở chế độ chọn
+        holder.itemView.setOnClickListener {
+            if (isMultiSelectMode) {
+                toggleSelection(flower)
+            } else {
+                // Nếu không ở chế độ chọn, có thể thêm hành động click thường nếu cần
+            }
+        }
+
+        // Click CheckBox
+        holder.cbSelect.setOnClickListener {
+            toggleSelection(flower)
+        }
+    }
+
+    // Hàm Quản lý Chế độ chọn
+    @SuppressLint("NotifyDataSetChanged")
+    @JvmName("setMultiSelectModeFromFunction")
+    fun setMultiSelectMode(enabled: Boolean) {
+        if (isMultiSelectMode != enabled) {
+            isMultiSelectMode = enabled
+            if (!enabled) {
+                selectedFlowers.clear() // Xóa lựa chọn khi thoát chế độ
+            }
+            onMultiSelectModeChanged(enabled) // Báo cho Fragment biết để hiển thị Toolbar
+            notifyDataSetChanged()
+        }
+    }
+
+    // Hàm Chọn/Bỏ chọn một mục
+    private fun toggleSelection(flower: Flower) {
+        if (selectedFlowers.contains(flower)) {
+            selectedFlowers.remove(flower)
+        } else {
+            selectedFlowers.add(flower)
+        }
+        onSelectionCountChanged(selectedFlowers.size) // Báo số lượng
+        // Chỉ cập nhật item bị ảnh hưởng để tối ưu hiệu suất
+        val index = flowers.indexOf(flower)
+        if (index != -1) notifyItemChanged(index)
+    }
+
+    // Hàm hủy chọn tất cả (Dùng cho Fragment)
+    fun clearSelection() {
+        selectedFlowers.clear()
+        setMultiSelectMode(false)
     }
 }

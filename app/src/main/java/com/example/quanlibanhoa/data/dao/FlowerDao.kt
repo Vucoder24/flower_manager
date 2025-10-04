@@ -7,7 +7,7 @@ import com.example.quanlibanhoa.data.entity.Flower
 @Dao
 interface FlowerDao {
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(flower: Flower): Long
 
     @Transaction
@@ -17,6 +17,10 @@ interface FlowerDao {
     @Transaction
     @Delete
     suspend fun delete(flower: Flower)
+
+    @Transaction
+    @Delete
+    suspend fun deleteMultiple(flowers: List<Flower>)
 
     @Query("SELECT * FROM flowers ORDER BY tenHoa ASC")
     fun getAllFlowers(): LiveData<List<Flower>>

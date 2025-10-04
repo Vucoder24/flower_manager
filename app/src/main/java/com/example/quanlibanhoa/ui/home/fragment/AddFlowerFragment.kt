@@ -10,13 +10,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.quanlibanhoa.R
-import com.example.quanlibanhoa.data.entity.Flower
 import com.example.quanlibanhoa.databinding.FragmentAddFlowerBinding
 import com.example.quanlibanhoa.ui.home.viewmodel.FlowerViewModel
 import com.example.quanlibanhoa.ui.home.viewmodel.FlowerViewModelFactory
-import com.example.quanlibanhoa.ui.home.viewmodel.State
-import java.io.File
-import java.io.FileOutputStream
+import com.example.quanlibanhoa.ui.home.viewmodel.StateFlower
+import com.example.quanlibanhoa.utils.loadImageFromUri
 
 
 class AddFlowerFragment : Fragment() {
@@ -44,10 +42,16 @@ class AddFlowerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addEvent()
+        observerData()
+    }
+
+    private fun observerData() {
         // observer
-        flowerViewModel.flowerState.observe(viewLifecycleOwner){ result ->
-            when(result){
-                State.ADD_SUCCESS -> {
+        flowerViewModel.addFlowerState.observe(viewLifecycleOwner) { result ->
+            if (result == StateFlower.IDLE) return@observe
+
+            when (result) {
+                StateFlower.ADD_FLOWER_SUCCESS -> {
                     Toast.makeText(
                         requireContext(),
                         "Thêm thành công.",
@@ -55,17 +59,29 @@ class AddFlowerFragment : Fragment() {
                     ).show()
                     imagePath = null
                     clearForm()
+                    flowerViewModel.resetAddState()
                 }
-                State.ADD_ERROR -> {
-                    // Xóa ảnh nếu có lỗi
-                    imagePath?.let { deleteImageFile(it) }
+
+                StateFlower.ADD_FLOWER_ERROR -> {
                     Toast.makeText(
                         requireContext(),
                         "Có lỗi khi thêm hoa, vui lòng thử lại!",
                         Toast.LENGTH_SHORT
                     ).show()
+                    flowerViewModel.resetAddState()
                 }
+
+                StateFlower.ADD_FLOWER_INVALID_NAME -> {
+                    Toast.makeText(
+                        requireContext(),
+                        "Tên hoa đã tồn tại, vui lòng đặt tên khác!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    flowerViewModel.resetAddState()
+                }
+
                 else -> {}
+
             }
         }
     }
@@ -76,7 +92,7 @@ class AddFlowerFragment : Fragment() {
         ) { uri: Uri? ->
             uri?.let {
                 selectedImageUri = it
-                binding.imgHoa.setImageURI(it)
+                binding.imgHoa.loadImageFromUri(it)
             }
         }
 
@@ -104,58 +120,22 @@ class AddFlowerFragment : Fragment() {
                 binding.edtGiaBan.requestFocus()
                 return@setOnClickListener
             }
-            if(giaBan < giaNhap){
+            if (giaBan < giaNhap) {
                 binding.edtGiaBan.error = "Giá bán không thể nhỏ hơn giá nhập!"
                 binding.edtGiaBan.requestFocus()
                 return@setOnClickListener
             }
 
-            // Lưu ảnh vào bộ nhớ nội bộ trước
-            imagePath = selectedImageUri?.let { saveImageToInternalStorage(it, tenHoa) }
-
-            val flower = Flower(
+            flowerViewModel.addFlower(
                 tenHoa = tenHoa,
                 giaNhap = giaNhap,
                 giaBan = giaBan,
-                hinhAnh = imagePath
+                imageUri = selectedImageUri
             )
-
-            flowerViewModel.addFlower(flower)
         }
     }
 
-    private fun saveImageToInternalStorage(uri: Uri, flowerName: String): String? {
-        val inputStream = requireContext().contentResolver.openInputStream(uri)?: return null
-        var fileName = flowerName.replace(" ", "_") // Thay thế khoảng trắng bằng dấu gạch dưới
-        var file = File(requireContext().filesDir, "images/$fileName.jpg")
-        var count = 1
-
-        // Kiểm tra nếu tệp đã tồn tại và tạo tên duy nhất
-        while (file.exists()) {
-            fileName = "${flowerName}_$count".replace(" ", "_")
-            file = File(requireContext().filesDir, "images/$fileName.jpg")
-            count++
-        }
-
-        file.parentFile?.mkdirs() // Tạo thư mục nếu chưa tồn tại
-        val outputStream = FileOutputStream(file)
-
-        inputStream.use { input ->
-            outputStream.use { output ->
-                input.copyTo(output)
-            }
-        }
-        return file.absolutePath // Trả về đường dẫn ảnh
-    }
-
-    private fun deleteImageFile(imagePath: String) {
-        val file = File(imagePath)
-        if (file.exists()) {
-            file.delete() // Xóa tệp hình ảnh
-        }
-    }
-
-    fun clearForm(){
+    fun clearForm() {
         binding.edtTenHoa.text.clear()
         binding.edtGiaNhap.text.clear()
         binding.edtGiaBan.text.clear()

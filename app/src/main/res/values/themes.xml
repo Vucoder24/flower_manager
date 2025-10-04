@@ -8,4 +8,9 @@
     <style name="Theme.QuảnLíBánHoa" parent="Base.Theme.QuảnLíBánHoa" />
 
     <color name="my_light_primary">#4aa087</color>
+
+    <style name="MyTabText" parent="android:TextAppearance.Widget.TabWidget">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
 </resources>
