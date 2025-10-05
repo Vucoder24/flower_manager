@@ -13,6 +13,7 @@ import com.example.quanlibanhoa.data.entity.Flower
 import com.example.quanlibanhoa.data.repository.AppRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Date
 
 class FlowerViewModel(
     private val repository: AppRepository
@@ -103,7 +104,8 @@ class FlowerViewModel(
                     tenHoa = tenHoa,
                     giaNhap = giaNhap,
                     giaBan = giaBan,
-                    hinhAnh = finalImagePath
+                    hinhAnh = finalImagePath,
+                    createdAt = Date().time
                 )
 
                 // 3. UPDATE vào DB (Có thể ném SQLiteConstraintException)

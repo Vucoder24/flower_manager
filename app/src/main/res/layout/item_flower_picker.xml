@@ -6,7 +6,7 @@
     android:orientation="horizontal"
     android:clickable="true"
     android:focusable="true"
-    android:background="@drawable/background_flower_picker_selector"
+    android:background="@drawable/flower_picker_ripple"
     android:padding="8dp">
 
     <androidx.cardview.widget.CardView

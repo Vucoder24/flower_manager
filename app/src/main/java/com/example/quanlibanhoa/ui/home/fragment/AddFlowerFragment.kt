@@ -49,7 +49,8 @@ class AddFlowerFragment : Fragment() {
         // observer
         flowerViewModel.addFlowerState.observe(viewLifecycleOwner) { result ->
             if (result == StateFlower.IDLE) return@observe
-
+            binding.btnSave.isEnabled = true
+            binding.btnSave.alpha = 1f
             when (result) {
                 StateFlower.ADD_FLOWER_SUCCESS -> {
                     Toast.makeText(
@@ -125,6 +126,8 @@ class AddFlowerFragment : Fragment() {
                 binding.edtGiaBan.requestFocus()
                 return@setOnClickListener
             }
+            binding.btnSave.isEnabled = false
+            binding.btnSave.alpha = 0.8f
 
             flowerViewModel.addFlower(
                 tenHoa = tenHoa,

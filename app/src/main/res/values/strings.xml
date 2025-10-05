@@ -28,4 +28,6 @@
     <string name="label_sale">Giảm giá(k):</string>
     <string name="action_clear_selection">Bỏ chọn tất cả</string>
     <string name="action_delete_selection">Xóa</string>
+    <string name="label_date">Ngày:</string>
+    <string name="hint_search_invoice">Tìm hóa đơn...</string>
 </resources>

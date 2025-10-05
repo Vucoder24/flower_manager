@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.quanlibanhoa.data.entity.Flower
 import com.example.quanlibanhoa.databinding.ItemInvoiceFlowerBinding
 import com.example.quanlibanhoa.utils.loadImageFromUri
+import com.example.quanlibanhoa.utils.toVNOnlyK
 
 class InvoiceFlowerAdapter(
     private val flowers: MutableList<Flower>,
@@ -69,8 +70,8 @@ class InvoiceFlowerAdapter(
         val flower = flowers[position]
         holder.binding.txtName.text = flower.tenHoa
         holder.binding.imgFlower.loadImageFromUri(flower.hinhAnh)
-        holder.binding.txtPriceIn.text = "Giá nhập: ${flower.giaNhap.toInt()}k"
-        holder.binding.txtPriceOut.text = "Giá bán: ${flower.giaBan.toInt()}k"
+        holder.binding.txtPriceIn.text = "Giá nhập: ${flower.giaNhap.toInt().toVNOnlyK()}/bó"
+        holder.binding.txtPriceOut.text = "Giá bán: ${flower.giaBan.toInt().toVNOnlyK()}/bó"
         holder.binding.edtQuantity.setText(flower.soluong.toString())
     }
 

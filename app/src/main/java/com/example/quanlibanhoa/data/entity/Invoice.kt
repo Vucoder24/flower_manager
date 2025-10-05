@@ -14,6 +14,6 @@ data class Invoice(
     val giamGia: Int,
     val tongTienThu: Double,
     val tongLoiNhuan: Double,
+    val date: Date,
     val createdAt: Long = Date().time
 )
-

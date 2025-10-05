@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:scrollbars="none"
     tools:context=".ui.edit_flower.EditFlowerActivity">
 
     <LinearLayout
@@ -28,7 +29,7 @@
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/ic_arrow"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:tint="@color/black"/>
+                app:tint="?android:attr/textColorPrimary"/>
 
             <TextView
                 android:id="@+id/title_edit_flower"

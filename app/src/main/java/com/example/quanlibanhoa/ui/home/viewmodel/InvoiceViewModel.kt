@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.quanlibanhoa.data.entity.Flower
 import com.example.quanlibanhoa.data.entity.Invoice
 import com.example.quanlibanhoa.data.entity.InvoiceDetail
+import com.example.quanlibanhoa.data.entity.InvoiceWithDetails
 import com.example.quanlibanhoa.data.repository.AppRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,19 +28,34 @@ class InvoiceViewModel(
     }
     val editInvoiceState: LiveData<StateInvoice> = _editInvoiceState.distinctUntilChanged()
 
-    private val _deleteInvoiceState = MutableLiveData<StateInvoice>().apply {
+    private val _deleteInvoiceState1 = MutableLiveData<StateInvoice>().apply {
         value = StateInvoice.IDLE // init về IDLE
     }
-    val deleteInvoiceState: LiveData<StateInvoice> = _deleteInvoiceState.distinctUntilChanged()
+    val deleteInvoiceState1: LiveData<StateInvoice> = _deleteInvoiceState1.distinctUntilChanged()
 
-    val invoiceStateList: LiveData<List<Invoice>> = repository.getAllInvoices().distinctUntilChanged()
+    private val _deleteInvoiceState2 = MutableLiveData<StateInvoice>().apply {
+        value = StateInvoice.IDLE // init về IDLE
+    }
+    val deleteInvoiceState2: LiveData<StateInvoice> = _deleteInvoiceState2.distinctUntilChanged()
+
+    private val _deleteInvoiceState3 = MutableLiveData<StateInvoice>().apply {
+        value = StateInvoice.IDLE // init về IDLE
+    }
+    val deleteInvoiceState3: LiveData<StateInvoice> = _deleteInvoiceState3.distinctUntilChanged()
+
+    private val _deleteInvoiceState4 = MutableLiveData<StateInvoice>().apply {
+        value = StateInvoice.IDLE // init về IDLE
+    }
+    val deleteInvoiceState4: LiveData<StateInvoice> = _deleteInvoiceState4.distinctUntilChanged()
+
+    val invoiceWithDetailsStateList: LiveData<List<InvoiceWithDetails>> = repository.getAllInvoicesWithDetails().distinctUntilChanged()
 
     fun addInvoiceWithDetail(invoice: Invoice, details: List<InvoiceDetail>) {
         viewModelScope.launch(Dispatchers.IO){
             try {
                 repository.insertInvoiceWithDetails(invoice, details)
                 _addInvoiceState.postValue(StateInvoice.ADD_INVOICE_SUCCESS)
-            }catch (e: Exception){
+            }catch (_: Exception){
                 _addInvoiceState.postValue(StateInvoice.ADD_INVOICE_ERROR)
             }
         }
@@ -50,19 +66,8 @@ class InvoiceViewModel(
             try {
                 repository.updateFlower(flower)
                 _editInvoiceState.postValue(StateInvoice.EDIT_INVOICE_SUCCESS)
-            }catch (e: Exception){
+            }catch (_: Exception){
                 _editInvoiceState.postValue(StateInvoice.EDIT_INVOICE_ERROR)
-            }
-        }
-    }
-
-    fun deleteFlower(flower: Flower) {
-        viewModelScope.launch(Dispatchers.IO){
-            try {
-                repository.deleteFlower(flower)
-                _deleteInvoiceState.postValue(StateInvoice.DELETE_INVOICE_SUCCESS)
-            }catch (e: Exception){
-                _deleteInvoiceState.postValue(StateInvoice.DELETE_INVOICE_ERROR)
             }
         }
     }
@@ -75,8 +80,35 @@ class InvoiceViewModel(
         _editInvoiceState.value = StateInvoice.IDLE
     }
 
-    fun resetDeleteState() {
-        _deleteInvoiceState.value = StateInvoice.IDLE
+    fun resetDeleteState(id: Int) {
+        when(id){
+            1 -> {_deleteInvoiceState1.value = StateInvoice.IDLE}
+            2 -> {_deleteInvoiceState1.value = StateInvoice.IDLE}
+            3 -> {_deleteInvoiceState1.value = StateInvoice.IDLE}
+            4 -> {_deleteInvoiceState1.value = StateInvoice.IDLE}
+        }
+    }
+
+    fun deleteInvoicesByIds(invoiceIds: List<Int>, id: Int) {
+        viewModelScope.launch {
+            try {
+                // Gọi hàm DAO đã thiết lập onDelete CASCADE
+                repository.deleteInvoicesByIds(invoiceIds)
+                when(id){
+                    1 -> {_deleteInvoiceState1.postValue(StateInvoice.DELETE_INVOICE_SUCCESS)}
+                    2 -> {_deleteInvoiceState2.postValue(StateInvoice.DELETE_INVOICE_SUCCESS)}
+                    3 -> {_deleteInvoiceState3.postValue(StateInvoice.DELETE_INVOICE_SUCCESS)}
+                    4 -> {_deleteInvoiceState4.postValue(StateInvoice.DELETE_INVOICE_SUCCESS)}
+                }
+            } catch (_: Exception) {
+                when(id){
+                    1 -> {_deleteInvoiceState1.postValue(StateInvoice.DELETE_INVOICE_ERROR)}
+                    2 -> {_deleteInvoiceState2.postValue(StateInvoice.DELETE_INVOICE_ERROR)}
+                    3 -> {_deleteInvoiceState3.postValue(StateInvoice.DELETE_INVOICE_ERROR)}
+                    4 -> {_deleteInvoiceState4.postValue(StateInvoice.DELETE_INVOICE_ERROR)}
+                }
+            }
+        }
     }
 
 }

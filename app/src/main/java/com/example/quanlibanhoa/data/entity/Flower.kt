@@ -3,6 +3,7 @@ package com.example.quanlibanhoa.data.entity
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.util.Date
 
 @Entity(
     tableName = "flowers",
@@ -15,6 +16,7 @@ data class Flower(
     val hinhAnh: String?,
     var giaNhap: Double,
     var giaBan: Double,
-    var soluong: Int = 1
+    var soluong: Int = 1,
+    val createdAt: Long = Date().time
 )
 

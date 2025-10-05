@@ -6,15 +6,19 @@ import com.example.quanlibanhoa.data.entity.InvoiceDetail
 
 @Dao
 interface InvoiceDetailDao {
+    @Transaction
     @Insert
     suspend fun insertInvoiceDetail(detail: InvoiceDetail): Long
 
+    @Transaction
     @Insert
     suspend fun insertInvoiceDetails(details: List<InvoiceDetail>)
 
+    @Transaction
     @Update
     suspend fun updateInvoiceDetail(detail: InvoiceDetail)
 
+    @Transaction
     @Delete
     suspend fun deleteInvoiceDetail(detail: InvoiceDetail)
 

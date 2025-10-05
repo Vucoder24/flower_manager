@@ -64,6 +64,8 @@ class EditFlowerActivity : AppCompatActivity() {
         // observer
         flowerViewModel.editFlowerState.observe(this) { result ->
             if (result == StateFlower.IDLE) return@observe
+            binding.btnSave.isEnabled = true
+            binding.btnSave.alpha = 1f
             when (result) {
                 StateFlower.EDIT_FLOWER_SUCCESS -> {
                     Toast.makeText(
@@ -144,6 +146,8 @@ class EditFlowerActivity : AppCompatActivity() {
                 binding.edtGiaBan.requestFocus()
                 return@setOnClickListener
             }
+            binding.btnSave.isEnabled = false
+            binding.btnSave.alpha = 0.8f
 
             flowerViewModel.editFlower(
                 flowerId = flowerId.toInt(),
@@ -151,7 +155,7 @@ class EditFlowerActivity : AppCompatActivity() {
                 giaNhap = giaNhap,
                 giaBan = giaBan,
                 newImageUri = selectedImageUri, // URI mới (có thể null)
-                oldImagePath = oldImagePath // Đường dẫn ảnh cũ (có thể null)
+                oldImagePath = oldImagePath, // Đường dẫn ảnh cũ (có thể null)
             )
         }
     }

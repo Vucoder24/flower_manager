@@ -7,6 +7,7 @@ import com.example.quanlibanhoa.data.AppDatabase
 import com.example.quanlibanhoa.data.entity.Flower
 import com.example.quanlibanhoa.data.entity.Invoice
 import com.example.quanlibanhoa.data.entity.InvoiceDetail
+import com.example.quanlibanhoa.data.entity.InvoiceWithDetails
 import java.io.File
 import java.io.FileOutputStream
 
@@ -52,22 +53,6 @@ class AppRepository(private val context: Context) {
     fun getAllFlowers(): LiveData<List<Flower>>{
         return db.flowerDao().getAllFlowers()
     }
-    suspend fun getFlowerById(id: Int) = db.flowerDao().getFlowerById(id)
-
-    // ---------------- Invoice ----------------
-    suspend fun insertInvoice(invoice: Invoice) = db.invoiceWithDetailsDao().insertInvoice(invoice)
-    suspend fun updateInvoice(invoice: Invoice) = db.invoiceWithDetailsDao().updateInvoice(invoice)
-    suspend fun deleteInvoice(invoice: Invoice) = db.invoiceWithDetailsDao().deleteInvoice(invoice)
-    suspend fun getInvoiceById(id: Int) = db.invoiceWithDetailsDao().getInvoiceById(id)
-    fun getAllInvoices(): LiveData<List<Invoice>> = db.invoiceDao().getAllInvoices()
-
-    // ---------------- InvoiceDetail ----------------
-    suspend fun insertDetail(detail: InvoiceDetail) = db.invoiceWithDetailsDao().insertInvoiceDetail(detail)
-    suspend fun updateDetail(detail: InvoiceDetail) = db.invoiceWithDetailsDao().updateInvoiceDetail(detail)
-    suspend fun deleteDetail(detail: InvoiceDetail) = db.invoiceWithDetailsDao().deleteInvoiceDetail(detail)
-    suspend fun getDetailsByInvoiceId(invoiceId: Int) = db.invoiceWithDetailsDao().getDetailsByInvoiceId(invoiceId)
-
-    // ---------------- Invoice + Details (Transaction) ----------------
     suspend fun insertInvoiceWithDetails(invoice: Invoice, details: List<InvoiceDetail>) {
         val invoiceId = db.invoiceWithDetailsDao().insertInvoice(invoice)
         details.forEach { detail ->
@@ -75,8 +60,11 @@ class AppRepository(private val context: Context) {
         }
     }
 
-    suspend fun updateInvoiceWithDetails(invoice: Invoice, details: List<InvoiceDetail>) {
-        db.invoiceWithDetailsDao().updateInvoiceWithDetails(invoice, details)
+    fun getAllInvoicesWithDetails(): LiveData<List<InvoiceWithDetails>> =
+        db.invoiceWithDetailsDao().getAllInvoicesWithDetails()
+
+    suspend fun deleteInvoicesByIds(invoiceIds: List<Int>) {
+        db.invoiceDao().deleteInvoicesByIds(invoiceIds)
     }
 
 }

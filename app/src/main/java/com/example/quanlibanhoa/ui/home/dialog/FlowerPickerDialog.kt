@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LiveData
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quanlibanhoa.R
@@ -41,13 +42,18 @@ class FlowerPickerDialog(
 
         rv.adapter = adapter
         rv.layoutManager = LinearLayoutManager(context)
-
+        val dividerItemDecoration =
+            DividerItemDecoration(rv.context, LinearLayoutManager.VERTICAL)
+        rv.addItemDecoration(dividerItemDecoration)
         // Quan sát dữ liệu hoa (LiveData)
         flowers.observe(this) { flowers ->
+            progressBar.visibility = View.GONE
+
             if (flowers.isNullOrEmpty()) {
-                progressBar.visibility = View.VISIBLE
+                // Nếu DB trống thật, hiển thị danh sách rỗng
+                allFlowers = emptyList()
+                adapter.updateData(emptyList())
             } else {
-                progressBar.visibility = View.GONE
                 allFlowers = flowers
                 adapter.updateData(flowers)
             }

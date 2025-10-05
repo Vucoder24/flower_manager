@@ -1,11 +1,14 @@
 package com.example.quanlibanhoa.ui.home.fragment
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -22,6 +25,11 @@ import com.example.quanlibanhoa.ui.home.viewmodel.FlowerViewModelFactory
 import com.example.quanlibanhoa.ui.home.viewmodel.InvoiceViewModel
 import com.example.quanlibanhoa.ui.home.viewmodel.InvoiceViewModelFactory
 import com.example.quanlibanhoa.ui.home.viewmodel.StateInvoice
+import com.example.quanlibanhoa.utils.toVNOnlyK
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Date
 
 class AddInvoiceFragment : Fragment() {
 
@@ -29,9 +37,8 @@ class AddInvoiceFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: InvoiceFlowerAdapter
-    private val selectedFlowers = mutableListOf<Flower>()  // danh sách hoa đã chọn
+    private val selectedFlowers = mutableListOf<Flower>()
 
-    // danh sách hoa từ DB (được cập nhật khi observer kích hoạt)
     private var availableFlowers: List<Flower> = emptyList()
 
     // các biến lưu state add hiện tại
@@ -55,10 +62,15 @@ class AddInvoiceFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentAddInvoiceBinding.inflate(inflater, container, false)
+        _binding = FragmentAddInvoiceBinding.inflate(
+            inflater,
+            container,
+            false
+        )
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -94,7 +106,8 @@ class AddInvoiceFragment : Fragment() {
         }
         invoiceViewModel.addInvoiceState.observe(viewLifecycleOwner) { state ->
             if (state == StateInvoice.IDLE) return@observe
-
+            binding.btnSaveInvoice.isEnabled = true
+            binding.btnSaveInvoice.alpha = 1f
             when (state) {
                 StateInvoice.ADD_INVOICE_SUCCESS -> {
                     Toast.makeText(
@@ -122,7 +135,25 @@ class AddInvoiceFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun addEvent() {
+        val myFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        var selectedDate = LocalDate.now()
+        binding.edtDateInvoice.setText(selectedDate.format(myFormat))
+
+        binding.edtDateInvoice.setOnClickListener {
+            val datePicker = DatePickerDialog(
+                requireContext(),
+                { _, year, month, dayOfMonth ->
+                    selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
+                    binding.edtDateInvoice.setText(selectedDate.format(myFormat))
+                },
+                selectedDate.year,
+                selectedDate.monthValue - 1,
+                selectedDate.dayOfMonth
+            )
+            datePicker.show()
+        }
         // Chọn hoa
         binding.btnAddFlower.setOnClickListener {
             val dialog = FlowerPickerDialog(
@@ -158,14 +189,25 @@ class AddInvoiceFragment : Fragment() {
             val address = binding.edtCustomerAddress.text.toString()
             val sale = binding.edtSale.text.toString().toIntOrNull() ?: 0
 
-            if (customerName.isBlank() || selectedFlowers.isEmpty()) {
+            if (customerName.isBlank()) {
+                binding.edtCustomerName.error = "Tên khách hàng không được để trống!"
+                binding.edtCustomerName.requestFocus()
+                return@setOnClickListener
+            }
+            if(selectedFlowers.isEmpty()){
                 Toast.makeText(
                     requireContext(),
-                    "Vui lòng nhập đủ thông tin",
+                    "Bạn chưa thêm hoa vào hóa đơn!",
                     Toast.LENGTH_SHORT
                 ).show()
                 return@setOnClickListener
             }
+            binding.btnSaveInvoice.isEnabled = false
+            binding.btnSaveInvoice.alpha = 0.8f
+            // ⚡ Tạo đối tượng Date chỉ chứa ngày/tháng/năm (giờ = 0)
+            val date =
+                Date.from(selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+
             //tạo hóa đơn
             val invoice = Invoice(
                 tenKhach = customerName,
@@ -174,7 +216,8 @@ class AddInvoiceFragment : Fragment() {
                 giamGia = sale,
                 tongSoLuong = totalQty,
                 tongTienThu = totalIncome,
-                tongLoiNhuan = totalProfit
+                tongLoiNhuan = totalProfit,
+                date = date
             )
             // tạo danh sách chi tiết hóa đơn
             val details = selectedFlowers.map {
@@ -224,9 +267,9 @@ class AddInvoiceFragment : Fragment() {
         totalIncome = selectedFlowers.sumOf { it.soluong * it.giaBan } - sale
         totalProfit = selectedFlowers.sumOf { it.soluong * (it.giaBan - it.giaNhap) } - sale
 
-        binding.txtCount.text = "Tổng: $totalQty bó"
-        binding.txtTotalIn.text = "Tổng thu: ${totalIncome.toInt()}k"
-        binding.txtTotalProfit.text = "Tổng lợi nhuận: ${totalProfit.toInt()}k"
+        binding.txtCount.text = "\uD83C\uDF38 Số lượng: $totalQty bó"
+        binding.txtTotalIn.text = "\uD83D\uDCB0 Tổng thu: ${totalIncome.toInt().toVNOnlyK()}"
+        binding.txtTotalProfit.text = "\uD83D\uDCB0 Tổng lợi nhuận: ${totalProfit.toInt().toVNOnlyK()}"
     }
 
     @SuppressLint("SetTextI18n")

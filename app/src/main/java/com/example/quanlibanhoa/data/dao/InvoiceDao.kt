@@ -23,4 +23,8 @@ interface InvoiceDao {
 
     @Query("SELECT * FROM invoices WHERE id = :id LIMIT 1")
     suspend fun getInvoiceById(id: Int): Invoice?
+
+    @Transaction
+    @Query("DELETE FROM invoices WHERE id IN (:invoiceIds)")
+    suspend fun deleteInvoicesByIds(invoiceIds: List<Int>)
 }

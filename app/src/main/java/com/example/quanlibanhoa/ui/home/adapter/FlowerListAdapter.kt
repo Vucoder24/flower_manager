@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.quanlibanhoa.R
 import com.example.quanlibanhoa.data.entity.Flower
 import com.example.quanlibanhoa.utils.loadImageFromUri
+import com.example.quanlibanhoa.utils.toVNOnlyK
 
 class FlowerListAdapter(
     private val onEdit: (Flower) -> Unit,
@@ -51,8 +52,8 @@ class FlowerListAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val flower = flowers[position]
         holder.txtName.text = flower.tenHoa
-        holder.txtPriceIn.text = "Giá nhập: ${flower.giaNhap.toInt()}k"
-        holder.txtPrice.text = "Giá bán: ${flower.giaBan.toInt()}k"
+        holder.txtPriceIn.text = "\uD83D\uDCB0 Giá nhập: ${flower.giaNhap.toInt().toVNOnlyK()}/bó"
+        holder.txtPrice.text = "\uD83D\uDCB0 Giá bán: ${flower.giaBan.toInt().toVNOnlyK()}/bó"
         holder.imgFlower.loadImageFromUri(flower.hinhAnh)
 
         // 2. Trạng thái giao diện
