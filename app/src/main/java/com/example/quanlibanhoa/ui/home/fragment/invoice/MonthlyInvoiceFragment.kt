@@ -3,6 +3,7 @@ package com.example.quanlibanhoa.ui.home.fragment.invoice
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,9 +15,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.quanlibanhoa.data.entity.InvoiceWithDetails
 import com.example.quanlibanhoa.databinding.FragmentMonthlyInvoiceBinding
+import com.example.quanlibanhoa.ui.edit_invoice.EditInvoiceActivity
+import com.example.quanlibanhoa.ui.home.HomeActivity
 import com.example.quanlibanhoa.ui.home.adapter.InvoiceHistoryAdapter
 import com.example.quanlibanhoa.ui.home.viewmodel.InvoiceViewModel
 import com.example.quanlibanhoa.ui.home.viewmodel.InvoiceViewModelFactory
@@ -53,14 +58,17 @@ class MonthlyInvoiceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         adapter = InvoiceHistoryAdapter(
+            onEdit = { invoice ->
+                val intent =
+                    Intent(requireContext(), EditInvoiceActivity::class.java)
+                intent.putExtra("invoice_data", invoice)
+                requireContext().startActivity(intent)
+                (requireContext() as HomeActivity).slideNewActivity()
+            },
             onClick = { invoice ->
                 // Xử lý sự kiện khi nhấp vào hóa đơn (Xem chi tiết)
                 if (!adapter.isMultiSelectMode) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Xem chi tiết HĐ ${invoice.invoice.id}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showInvoiceDetailPopup(invoice)
                 }
             },
             onDeleteSelected = { list -> showDeleteConfirmDialog(list) },
@@ -77,12 +85,37 @@ class MonthlyInvoiceFragment : Fragment() {
         )
         binding.rycMonthlyInvoice.layoutManager = LinearLayoutManager(requireContext())
         binding.rycMonthlyInvoice.adapter = adapter
+        addEvent()
         observerData()
         setupSearchView()
     }
 
+    private fun addEvent() {
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.bindingAdapterPosition
+                val invoiceWithDetails = adapter.currentList[position]
+                val invoice = invoiceWithDetails.invoice
+
+                // Gọi ViewModel để toggle trạng thái
+                invoiceViewModel.toggleIsCompleted(invoice.id, invoice.isCompleted)
+
+                // Cập nhật UI tạm thời trong adapter
+                adapter.toggleCompleted(invoiceWithDetails)
+            }
+        })
+
+        itemTouchHelper.attachToRecyclerView(binding.rycMonthlyInvoice)
+    }
+
     private fun observerData() {
-        invoiceViewModel.invoiceWithDetailsStateList.observe(viewLifecycleOwner){
+        invoiceViewModel.invoiceWithDetailsStateList.observe(viewLifecycleOwner) {
             // Lọc hóa đơn theo tiêu chí tháng này
             val filteredInvoices =
                 InvoiceFilter.filterInvoices(it, "thisMonth")
@@ -103,16 +136,28 @@ class MonthlyInvoiceFragment : Fragment() {
                     ).show()
                     invoiceViewModel.resetDeleteState(3)
                 }
+
                 StateInvoice.DELETE_INVOICE_ERROR -> {
                     Toast.makeText(
                         requireContext(),
                         "Lỗi khi xóa hóa đơn, vui lòng thử lại!",
-                        Toast.LENGTH_SHORT).show()
+                        Toast.LENGTH_SHORT
+                    ).show()
                     invoiceViewModel.resetDeleteState(3)
                 }
+
                 else -> {}
             }
         }
+    }
+
+    private fun showInvoiceDetailPopup(invoice: InvoiceWithDetails) {
+        // Khởi tạo BottomSheetFragment, truyền dữ liệu hóa đơn đầy đủ
+        val detailSheet = InvoiceDetailBottomSheetFragment(invoice)
+
+        // Hiển thị BottomSheetDialogFragment
+        // Lưu ý: "InvoiceDetailTag" là một chuỗi định danh bất kỳ.
+        detailSheet.show(parentFragmentManager, "InvoiceDetailTag")
     }
 
     // HÀM XỬ LÝ TOOLBAR VÀ XÓA

@@ -73,7 +73,6 @@ class EditFlowerActivity : AppCompatActivity() {
                         "Sửa thành công.",
                         Toast.LENGTH_SHORT
                     ).show()
-                    clearForm()
                     flowerViewModel.resetEditState()
                     finish()
                     slideOutActivity()
@@ -164,7 +163,7 @@ class EditFlowerActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             // Android 14 trở lên
             overrideActivityTransition(
-                OVERRIDE_TRANSITION_OPEN,
+                OVERRIDE_TRANSITION_CLOSE,
                 R.anim.slide_out_right,
                 0
             )
@@ -178,11 +177,4 @@ class EditFlowerActivity : AppCompatActivity() {
         }
     }
 
-    fun clearForm() {
-        binding.edtTenHoa.text.clear()
-        binding.edtGiaNhap.text.clear()
-        binding.edtGiaBan.text.clear()
-        binding.imgHoa.setImageResource(R.drawable.ic_photo)
-        selectedImageUri = null
-    }
 }

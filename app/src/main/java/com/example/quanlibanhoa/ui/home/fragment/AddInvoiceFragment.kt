@@ -27,6 +27,8 @@ import com.example.quanlibanhoa.ui.home.viewmodel.InvoiceViewModelFactory
 import com.example.quanlibanhoa.ui.home.viewmodel.StateInvoice
 import com.example.quanlibanhoa.utils.toVNOnlyK
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
@@ -135,12 +137,21 @@ class AddInvoiceFragment : Fragment() {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     @RequiresApi(Build.VERSION_CODES.O)
     private fun addEvent() {
         val myFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val myTimeFormat = DateTimeFormatter.ofPattern("HH:mm")
         var selectedDate = LocalDate.now()
+        val nowTime = LocalTime.now()
+        var selectedHour = nowTime.hour
+        var selectedMinute = nowTime.minute
         binding.edtDateInvoice.setText(selectedDate.format(myFormat))
+        binding.edtTimeInvoice.setText(
+            nowTime.format(myTimeFormat)
+        )
 
+        // chọn ngày
         binding.edtDateInvoice.setOnClickListener {
             val datePicker = DatePickerDialog(
                 requireContext(),
@@ -153,6 +164,24 @@ class AddInvoiceFragment : Fragment() {
                 selectedDate.dayOfMonth
             )
             datePicker.show()
+        }
+        // chọn giờ
+        binding.edtTimeInvoice.setOnClickListener {
+            val timePicker = android.app.TimePickerDialog(
+                requireContext(),
+                { _, hourOfDay, minute ->
+                    selectedHour = hourOfDay
+                    selectedMinute = minute
+                    binding.edtTimeInvoice.setText(
+                        LocalTime.of(selectedHour, selectedMinute)
+                            .format(myTimeFormat)
+                    )
+                },
+                selectedHour,
+                selectedMinute,
+                true // dùng định dạng 24h
+            )
+            timePicker.show()
         }
         // Chọn hoa
         binding.btnAddFlower.setOnClickListener {
@@ -184,10 +213,22 @@ class AddInvoiceFragment : Fragment() {
 
         // Lưu hóa đơn
         binding.btnSaveInvoice.setOnClickListener {
-            val customerName = binding.edtCustomerName.text.toString()
-            val phone = binding.edtCustomerPhone.text.toString()
-            val address = binding.edtCustomerAddress.text.toString()
+            val customerName = binding.edtCustomerName.text.toString().trim()
+            val phone = binding.edtCustomerPhone.text.toString().trim()
+            val address = binding.edtCustomerAddress.text.toString().trim()
             val sale = binding.edtSale.text.toString().toIntOrNull() ?: 0
+            val note = binding.edtNote.text.toString().trim()
+            val paymentMethod = when (binding.rgPaymentMethod.checkedRadioButtonId) {
+                binding.rbTransfer.id -> binding.rbTransfer.text.toString()
+                binding.rbCash.id -> binding.rbCash.text.toString()
+                else -> getString(R.string.action_crash)
+            }
+
+            val isComplete = when (binding.rgOrderStatus.checkedRadioButtonId) {
+                binding.rbNotYet.id -> false
+                binding.rbComplete.id -> true
+                else -> {false}
+            }
 
             if (customerName.isBlank()) {
                 binding.edtCustomerName.error = "Tên khách hàng không được để trống!"
@@ -202,11 +243,21 @@ class AddInvoiceFragment : Fragment() {
                 ).show()
                 return@setOnClickListener
             }
+            val now = LocalDate.now()
+            if (selectedDate.isAfter(now) && isComplete) {
+                Toast.makeText(
+                    requireContext(),
+                    "Không thể đánh dấu 'Đã hoàn thành' cho đơn hàng có ngày giao trong tương lai!",
+                    Toast.LENGTH_LONG
+                ).show()
+                return@setOnClickListener
+            }
             binding.btnSaveInvoice.isEnabled = false
             binding.btnSaveInvoice.alpha = 0.8f
             // ⚡ Tạo đối tượng Date chỉ chứa ngày/tháng/năm (giờ = 0)
-            val date =
-                Date.from(selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+            val selectedTime = LocalTime.of(selectedHour, selectedMinute)
+            val dateTime = LocalDateTime.of(selectedDate, selectedTime)
+            val date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant())
 
             //tạo hóa đơn
             val invoice = Invoice(
@@ -217,6 +268,9 @@ class AddInvoiceFragment : Fragment() {
                 tongSoLuong = totalQty,
                 tongTienThu = totalIncome,
                 tongLoiNhuan = totalProfit,
+                ghiChu = note,
+                loaiGiaoDich = paymentMethod,
+                isCompleted = isComplete,
                 date = date
             )
             // tạo danh sách chi tiết hóa đơn

@@ -3,6 +3,7 @@ package com.example.quanlibanhoa.ui.home.fragment.invoice
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,6 +18,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quanlibanhoa.data.entity.InvoiceWithDetails
 import com.example.quanlibanhoa.databinding.FragmentDailyInvoiceBinding
+import com.example.quanlibanhoa.ui.edit_invoice.EditInvoiceActivity
+import com.example.quanlibanhoa.ui.home.HomeActivity
 import com.example.quanlibanhoa.ui.home.adapter.InvoiceHistoryAdapter
 import com.example.quanlibanhoa.ui.home.viewmodel.InvoiceViewModel
 import com.example.quanlibanhoa.ui.home.viewmodel.InvoiceViewModelFactory
@@ -54,6 +57,12 @@ class DailyInvoiceFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // 🔥 KHỞI TẠO ADAPTER VỚI CÁC CALLBACK XÓA
         adapter = InvoiceHistoryAdapter(
+            onEdit = { invoice ->
+                val intent = Intent(requireContext(), EditInvoiceActivity::class.java)
+                intent.putExtra("invoice_data", invoice)
+                requireContext().startActivity(intent)
+                (requireContext() as HomeActivity).slideNewActivity()
+            },
             onClick = { invoice ->
                 // Xử lý sự kiện khi nhấp vào hóa đơn (Xem chi tiết)
                 if (!adapter.isMultiSelectMode) {
@@ -108,6 +117,17 @@ class DailyInvoiceFragment : Fragment() {
                     invoiceViewModel.resetDeleteState(1)
                 }
                 else -> {}
+            }
+        }
+        // theo dõi cập nhật iscomplete
+        invoiceViewModel.editInvoiceState.observe(viewLifecycleOwner){
+            if (it == StateInvoice.IDLE) return@observe
+            if(it == StateInvoice.EDIT_INVOICE_ERROR){
+                Toast.makeText(
+                    requireContext(),
+                    "Cập nhật trạng thái đơn hàng không thành công , vui lòng tử lại!",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }

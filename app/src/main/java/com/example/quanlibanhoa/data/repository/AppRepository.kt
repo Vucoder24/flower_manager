@@ -48,7 +48,6 @@ class AppRepository(private val context: Context) {
 
     suspend fun insertFlower(flower: Flower) = db.flowerDao().insert(flower)
     suspend fun updateFlower(flower: Flower) = db.flowerDao().update(flower)
-    suspend fun deleteFlower(flower: Flower) = db.flowerDao().delete(flower)
     suspend fun deleteMultiple(flowers: List<Flower>) = db.flowerDao().deleteMultiple(flowers)
     fun getAllFlowers(): LiveData<List<Flower>>{
         return db.flowerDao().getAllFlowers()
@@ -65,6 +64,14 @@ class AppRepository(private val context: Context) {
 
     suspend fun deleteInvoicesByIds(invoiceIds: List<Int>) {
         db.invoiceDao().deleteInvoicesByIds(invoiceIds)
+    }
+
+    suspend fun updateInvoiceWithDetail(invoice: Invoice, details: List<InvoiceDetail>){
+        db.invoiceWithDetailsDao().updateInvoiceWithDetail(invoice, details)
+    }
+
+    suspend fun updateInvoiceCompleted(id: Int, isCompleted: Boolean){
+        db.invoiceDao().updateIsCompleted(id, isCompleted)
     }
 
 }

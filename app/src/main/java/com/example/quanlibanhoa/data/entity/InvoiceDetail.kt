@@ -3,6 +3,7 @@ package com.example.quanlibanhoa.data.entity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(
     tableName = "invoice_details",
@@ -23,5 +24,5 @@ data class InvoiceDetail(
     val soLuong: Int,
     val giaNhap: Double,
     val giaBan: Double
-)
+): Serializable
 

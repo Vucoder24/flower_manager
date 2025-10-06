@@ -91,9 +91,10 @@
 
         <ImageButton
             android:id="@+id/btnEdit"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_gravity="center"
+            android:padding="6dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:importantForAccessibility="no"
             android:scaleType="centerCrop"

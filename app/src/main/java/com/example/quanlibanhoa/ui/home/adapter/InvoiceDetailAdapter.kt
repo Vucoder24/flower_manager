@@ -35,7 +35,6 @@ class InvoiceDetailAdapter :
     class InvoiceDetailViewHolder(private val binding: ItemInvoiceFlowerDetailBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        // Đã bỏ đối số formatter
         @SuppressLint("SetTextI18n")
         fun bind(detail: InvoiceDetail) {
 

@@ -30,4 +30,11 @@
     <string name="action_delete_selection">Xóa</string>
     <string name="label_date">Ngày:</string>
     <string name="hint_search_invoice">Tìm hóa đơn...</string>
+    <string name="label_note">Ghi chú:</string>
+    <string name="label_paymen_method">Phương thức thanh toán:</string>
+    <string name="action_crash">Tiền mặt</string>
+    <string name="action_transfer">Chuyển khoản</string>
+    <string name="action_wait_ship">Đang chờ giao</string>
+    <string name="action_complete_ship">Đã hoàn thành</string>
+    <string name="title_edit_invoice">Sửa Hóa Đơn</string>
 </resources>

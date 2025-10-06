@@ -4,22 +4,23 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.quanlibanhoa.R
 import com.example.quanlibanhoa.data.entity.InvoiceWithDetails
 import com.example.quanlibanhoa.databinding.ItemHistoryInvoiceBinding
+import com.example.quanlibanhoa.utils.toFormattedString
 import com.example.quanlibanhoa.utils.toVNOnlyK
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class InvoiceHistoryAdapter(
+    private val onEdit: (InvoiceWithDetails) -> Unit,
     private val onClick: (InvoiceWithDetails) -> Unit, // Click thường để xem chi tiết
     @Suppress("unused") private val onDeleteSelected: (List<InvoiceWithDetails>) -> Unit,
     private val onMultiSelectModeChanged: (Boolean) -> Unit,
     private val onSelectionCountChanged: (Int) -> Unit
 ) : ListAdapter<InvoiceWithDetails, InvoiceHistoryAdapter.ViewHolder>(DiffCallback) {
-
     var isMultiSelectMode = false
         private set
     val selectedInvoices = mutableSetOf<InvoiceWithDetails>()
@@ -43,9 +44,33 @@ class InvoiceHistoryAdapter(
 
         with(holder.binding) {
             tvCustomerName.text = "KH: ${invoice.tenKhach}"
-            tvTotal.text = "💰 Thu: ${invoice.tongTienThu.toInt().toVNOnlyK()} (Lợi nhuận: ${invoice.tongLoiNhuan.toInt().toVNOnlyK()})"
-            val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(invoice.date)
-            tvDate.text = "🕒 Ngày: $formattedDate"
+            tvTotal.text = "💰 Thu: ${invoice.tongTienThu.toInt().toVNOnlyK()} " +
+                    "(Lợi nhuận: ${invoice.tongLoiNhuan.toInt().toVNOnlyK()})"
+            val formattedDate = invoice.date.toFormattedString()
+            tvDate.text = "🕒 $formattedDate"
+            when (invoice.isCompleted) {
+                true -> {
+                    tvStatus.text = holder.itemView.context
+                        .getString(R.string.action_complete_ship)
+                    tvStatus.setTextColor(
+                        ContextCompat.getColor(
+                            holder.itemView.context,
+                            R.color.my_light_primary
+                        )
+                    )
+                }
+
+                false -> {
+                    tvStatus.text = holder.itemView.context
+                        .getString(R.string.action_wait_ship)
+                    tvStatus.setTextColor(
+                        ContextCompat.getColor(
+                            holder.itemView.context,
+                            R.color.my_light_primary
+                        )
+                    )
+                }
+            }
 
             // 🔥 Hiển thị CheckBox nếu multi-select
             cbSelect.visibility = if (isMultiSelectMode) View.VISIBLE else View.GONE
@@ -74,11 +99,19 @@ class InvoiceHistoryAdapter(
             cbSelect.setOnClickListener {
                 toggleSelection(invoiceWithDetails)
             }
+            btnEdit.setOnClickListener {
+                onEdit(invoiceWithDetails)
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemHistoryInvoiceBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemHistoryInvoiceBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         return ViewHolder(binding)
     }
 

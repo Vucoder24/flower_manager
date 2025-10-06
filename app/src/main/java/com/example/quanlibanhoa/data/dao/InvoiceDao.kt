@@ -27,4 +27,8 @@ interface InvoiceDao {
     @Transaction
     @Query("DELETE FROM invoices WHERE id IN (:invoiceIds)")
     suspend fun deleteInvoicesByIds(invoiceIds: List<Int>)
+
+    @Transaction
+    @Query("UPDATE invoices SET isCompleted = :isCompleted WHERE id = :id")
+    suspend fun updateIsCompleted(id: Int, isCompleted: Boolean)
 }

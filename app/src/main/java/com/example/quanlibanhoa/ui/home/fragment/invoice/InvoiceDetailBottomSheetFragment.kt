@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quanlibanhoa.R
@@ -43,7 +44,8 @@ class InvoiceDetailBottomSheetFragment(
 
     private fun setupRecyclerView(view: View) {
         detailAdapter = InvoiceDetailAdapter()
-        val rvDetails = view.findViewById<RecyclerView>(R.id.rv_invoice_details) // Dùng findViewById
+        val rvDetails =
+            view.findViewById<RecyclerView>(R.id.rv_invoice_details) // Dùng findViewById
 
         rvDetails.layoutManager = LinearLayoutManager(requireContext())
         rvDetails.adapter = detailAdapter
@@ -55,8 +57,7 @@ class InvoiceDetailBottomSheetFragment(
         val invoice = data.invoice
 
         // 1. HEADER & THÔNG TIN KHÁCH HÀNG
-        rootView.findViewById<TextView>(R.id.tv_invoice_id).text =
-            "HÓA ĐƠN #${invoice.id}"
+        rootView.findViewById<TextView>(R.id.tv_invoice_id).text = "HÓA ĐƠN"
         rootView.findViewById<TextView>(R.id.tv_invoice_date).text =
             invoice.date.toFormattedString()
 
@@ -80,15 +81,41 @@ class InvoiceDetailBottomSheetFragment(
         // 2. CHI TIẾT SẢN PHẨM (RecyclerView)
         detailAdapter.submitList(data.details)
 
-
         // Gán dữ liệu vào TextView
         rootView.findViewById<TextView>(R.id.tv_total_quantity).text =
-            invoice.tongSoLuong.toString()+" bó"
+            invoice.tongSoLuong.toString() + " bó"
         rootView.findViewById<TextView>(R.id.tv_discount_value).text =
             invoice.giamGia.toVNOnlyK()
         rootView.findViewById<TextView>(R.id.tv_total_revenue).text =
             invoice.tongTienThu.toInt().toVNOnlyK()
+        rootView.findViewById<TextView>(R.id.tv_seller_note).text =
+            "Ghi chú người bán: " + if (!invoice.ghiChu.isNullOrBlank())
+                invoice.ghiChu else "Không có"
+        rootView.findViewById<TextView>(R.id.tv_payment_method).text =
+            invoice.loaiGiaoDich
         rootView.findViewById<TextView>(R.id.tv_total_profit).text =
             invoice.tongLoiNhuan.toInt().toVNOnlyK()
+
+        val tvOrderStatus = rootView.findViewById<TextView>(R.id.tv_order_status)
+
+        if (invoice.isCompleted) {
+            // 1. Đặt Text
+            tvOrderStatus.text = getString(R.string.action_complete_ship)
+            tvOrderStatus.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.my_light_primary
+                )
+            )
+        } else {
+            // 1. Đặt Text
+            tvOrderStatus.text = getString(R.string.action_wait_ship)
+            tvOrderStatus.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.orange
+                )
+            )
+        }
     }
 }
