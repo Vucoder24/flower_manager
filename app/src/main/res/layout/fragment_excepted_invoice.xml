@@ -4,129 +4,50 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.home.fragment.invoice.ExceptedInvoiceFragment">
+    tools:context=".ui.home.fragment.ExceptedInvoiceFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_search"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="8dp"
-        android:elevation="4dp"
-        android:background="@drawable/bg_search_view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:id="@+id/ic_search"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="6dp"
-            android:importantForAccessibility="no"
-            android:src="@drawable/ic_search"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="?attr/colorPrimary"
-            tools:ignore="ImageContrastCheck" />
-
-        <ImageView
-            android:id="@+id/iv_clear"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="6dp"
-            android:importantForAccessibility="no"
-            android:src="@drawable/ic_cancel"
-            android:visibility="gone"
-            app:tint="?attr/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
-
-        <EditText
-            android:id="@+id/et_search"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/bg_search_view"
-            android:hint="@string/hint_search_invoice"
-            android:imeOptions="actionSearch"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:singleLine="true"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/iv_clear"
-            app:layout_constraintStart_toEndOf="@id/ic_search"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="TouchTargetSizeCheck,VisualLintTextFieldSize" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <LinearLayout
-        android:id="@+id/deleteToolbar"
-        style="?android:attr/buttonBarStyle"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/title_history_invoice"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:elevation="4dp"
-        android:gravity="start"
-        android:orientation="horizontal"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:visibility="gone"
+        android:text="@string/title_excepted_invoice"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="26sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layout_search"
-        tools:visibility="visible">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/btnConfirmDelete"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/red_500"
-            android:padding="5dp"
-            android:text="@string/action_delete_selection"
-            android:textAllCaps="false"
-            android:textColor="?attr/colorOnError"
-            android:textSize="14sp"
-            app:cornerRadius="8dp"
-            tools:ignore="TextContrastCheck" />
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayoutExceptedInvoice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_history_invoice"
+        app:tabMode="auto"
+        app:tabTextAppearance="@style/MyTabText"
+        tools:ignore="SpeakableTextPresentCheck" />
 
-        <Button
-            android:id="@+id/btnClearSelection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:backgroundTint="@color/my_light_primary"
-            android:contentDescription="@string/action_clear_selection"
-            android:text="@string/action_clear_selection"
-            android:textAllCaps="false"
-            android:textColor="?attr/colorOnError"
-            android:textSize="14sp"
-            app:cornerRadius="8dp"
-            tools:ignore="ButtonStyle,TextContrastCheck" />
 
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/ryc_excepted_invoice"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager_history"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="6dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:nestedScrollingEnabled="false"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="48dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="16dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/deleteToolbar"
-        tools:ignore="SpeakableTextPresentCheck"
-        tools:listitem="@layout/item_history_invoice" />
+        app:layout_constraintTop_toBottomOf="@+id/tabLayoutExceptedInvoice" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

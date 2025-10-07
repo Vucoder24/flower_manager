@@ -1,4 +1,4 @@
-package com.example.quanlibanhoa.ui.home.fragment.invoice
+package com.example.quanlibanhoa.ui.home.dialog
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -15,8 +15,6 @@ import com.example.quanlibanhoa.ui.home.adapter.InvoiceDetailAdapter
 import com.example.quanlibanhoa.utils.toFormattedString
 import com.example.quanlibanhoa.utils.toVNOnlyK
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-
-// Đổi tên các Package cho phù hợp với dự án của bạn
 
 class InvoiceDetailBottomSheetFragment(
     private val fullInvoice: InvoiceWithDetails

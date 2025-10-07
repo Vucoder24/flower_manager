@@ -1,4 +1,4 @@
-package com.example.quanlibanhoa.ui.home.fragment.invoice
+package com.example.quanlibanhoa.ui.home.fragment.history_invoice
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -15,23 +15,22 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.quanlibanhoa.data.entity.InvoiceWithDetails
-import com.example.quanlibanhoa.databinding.FragmentYearlyInvoiceBinding
+import com.example.quanlibanhoa.databinding.FragmentMonthlyInvoiceBinding
 import com.example.quanlibanhoa.ui.edit_invoice.EditInvoiceActivity
 import com.example.quanlibanhoa.ui.home.HomeActivity
 import com.example.quanlibanhoa.ui.home.adapter.InvoiceHistoryAdapter
+import com.example.quanlibanhoa.ui.home.dialog.InvoiceDetailBottomSheetFragment
 import com.example.quanlibanhoa.ui.home.viewmodel.InvoiceViewModel
 import com.example.quanlibanhoa.ui.home.viewmodel.InvoiceViewModelFactory
 import com.example.quanlibanhoa.ui.home.viewmodel.StateInvoice
 import com.example.quanlibanhoa.utils.InvoiceFilter
-import kotlin.getValue
 
 
-class YearlyInvoiceFragment : Fragment() {
-    private var _binding: FragmentYearlyInvoiceBinding? = null
+class MonthlyInvoiceFragment : Fragment() {
+
+    private var _binding: FragmentMonthlyInvoiceBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: InvoiceHistoryAdapter
     private var currentInvoices = listOf<InvoiceWithDetails>()
@@ -47,7 +46,7 @@ class YearlyInvoiceFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentYearlyInvoiceBinding.inflate(
+        _binding = FragmentMonthlyInvoiceBinding.inflate(
             layoutInflater,
             container,
             false
@@ -57,14 +56,14 @@ class YearlyInvoiceFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // 🔥 KHỞI TẠO ADAPTER VỚI CÁC CALLBACK XÓA
         adapter = InvoiceHistoryAdapter(
             onEdit = { invoice ->
                 val intent =
                     Intent(requireContext(), EditInvoiceActivity::class.java)
                 intent.putExtra("invoice_data", invoice)
                 requireContext().startActivity(intent)
-                (requireContext() as HomeActivity).slideNewActivity()},
+                (requireContext() as HomeActivity).slideNewActivity()
+            },
             onClick = { invoice ->
                 // Xử lý sự kiện khi nhấp vào hóa đơn (Xem chi tiết)
                 if (!adapter.isMultiSelectMode) {
@@ -83,47 +82,22 @@ class YearlyInvoiceFragment : Fragment() {
                 updateDeleteToolbarText(count)
             }
         )
-        binding.rycYearlyInvoice.layoutManager = LinearLayoutManager(requireContext())
-        binding.rycYearlyInvoice.adapter = adapter
-        addEvent()
+        binding.rycMonthlyInvoice.layoutManager = LinearLayoutManager(requireContext())
+        binding.rycMonthlyInvoice.adapter = adapter
         observerData()
         setupSearchView()
     }
 
-    private fun addEvent() {
-        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean = false
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.bindingAdapterPosition
-                val invoiceWithDetails = adapter.currentList[position]
-                val invoice = invoiceWithDetails.invoice
-
-                // Gọi ViewModel để toggle trạng thái
-                invoiceViewModel.toggleIsCompleted(invoice.id, invoice.isCompleted)
-
-                // Cập nhật UI tạm thời trong adapter
-                adapter.toggleCompleted(invoiceWithDetails)
-            }
-        })
-
-        itemTouchHelper.attachToRecyclerView(binding.rycYearlyInvoice)
-    }
-
     private fun observerData() {
-        invoiceViewModel.invoiceWithDetailsStateList.observe(viewLifecycleOwner){
-            // Lọc hóa đơn theo tiêu chí tuần này
+        invoiceViewModel.invoiceWithDetailsStateList.observe(viewLifecycleOwner) {
+            // Lọc hóa đơn theo tiêu chí tháng này
             val filteredInvoices =
-                InvoiceFilter.filterInvoices(it, "thisYear")
+                InvoiceFilter.filterInvoices(it, "thisMonth")
             currentInvoices = filteredInvoices
             adapter.submitList(filteredInvoices)
         }
         // 🔥 THEO DÕI TRẠNG THÁI XÓA (Cần có StateInvoice tương ứng trong ViewModel)
-        invoiceViewModel.deleteInvoiceState4.observe(viewLifecycleOwner) { result ->
+        invoiceViewModel.deleteInvoiceState3.observe(viewLifecycleOwner) { result ->
             if (result == StateInvoice.IDLE) return@observe
             binding.btnConfirmDelete.isEnabled = true
             binding.btnConfirmDelete.alpha = 1f
@@ -134,15 +108,18 @@ class YearlyInvoiceFragment : Fragment() {
                         "Xóa hóa đơn thành công.",
                         Toast.LENGTH_SHORT
                     ).show()
-                    invoiceViewModel.resetDeleteState(4)
+                    invoiceViewModel.resetDeleteState(3)
                 }
+
                 StateInvoice.DELETE_INVOICE_ERROR -> {
                     Toast.makeText(
                         requireContext(),
                         "Lỗi khi xóa hóa đơn, vui lòng thử lại!",
-                        Toast.LENGTH_SHORT).show()
-                    invoiceViewModel.resetDeleteState(4)
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    invoiceViewModel.resetDeleteState(3)
                 }
+
                 else -> {}
             }
         }
@@ -169,7 +146,7 @@ class YearlyInvoiceFragment : Fragment() {
                 //GỌI HÀM XÓA TRONG VIEWMODEL
                 binding.btnConfirmDelete.isEnabled = false
                 binding.btnConfirmDelete.alpha = 0.8f
-                invoiceViewModel.deleteInvoicesByIds(invoiceIds, 4)
+                invoiceViewModel.deleteInvoicesByIds(invoiceIds, 3)
                 adapter.clearSelection()
             }
             .setNegativeButton("Hủy", null)
@@ -255,7 +232,6 @@ class YearlyInvoiceFragment : Fragment() {
         imm?.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
-
     private fun filterList(query: String?) {
         // Sử dụng currentInvoices đã được lọc theo "thisWeek"
         val listToSearch = currentInvoices
@@ -279,4 +255,5 @@ class YearlyInvoiceFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }

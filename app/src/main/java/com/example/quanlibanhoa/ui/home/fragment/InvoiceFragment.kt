@@ -9,11 +9,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.quanlibanhoa.databinding.FragmentInvoiceBinding
-import com.example.quanlibanhoa.ui.home.fragment.invoice.DailyInvoiceFragment
-import com.example.quanlibanhoa.ui.home.fragment.invoice.ExceptedInvoiceFragment
-import com.example.quanlibanhoa.ui.home.fragment.invoice.MonthlyInvoiceFragment
-import com.example.quanlibanhoa.ui.home.fragment.invoice.WeeklyInvoiceFragment
-import com.example.quanlibanhoa.ui.home.fragment.invoice.YearlyInvoiceFragment
+import com.example.quanlibanhoa.ui.home.fragment.history_invoice.DailyInvoiceFragment
+import com.example.quanlibanhoa.ui.home.fragment.history_invoice.MonthlyInvoiceFragment
+import com.example.quanlibanhoa.ui.home.fragment.history_invoice.WeeklyInvoiceFragment
+import com.example.quanlibanhoa.ui.home.fragment.history_invoice.YearlyInvoiceFragment
 import com.google.android.material.tabs.TabLayoutMediator
 
 
@@ -33,25 +32,23 @@ class InvoiceFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupTabLayoutHistoryTransaction()
+        setupTabLayoutHistoryInvoice()
     }
 
-    private fun setupTabLayoutHistoryTransaction() {
+    private fun setupTabLayoutHistoryInvoice() {
         if (binding.viewPagerHistory.adapter == null) {
-            val adapter = ViewPagerHistoryAdapter(requireActivity())
+            val adapter = ViewPagerHistoryInvoiceAdapter(requireActivity())
             binding.viewPagerHistory.adapter = adapter
-            binding.viewPagerHistory.isUserInputEnabled = false
             // nối tab layout với viewpager2
             TabLayoutMediator(
                 binding.tabLayoutHistoryInvoice,
                 binding.viewPagerHistory
             ) { tab, position ->
                 tab.text = when (position) {
-                    0 -> "Dự kiến"
-                    1 -> "Hôm nay"
-                    2 -> "Tuần này"
-                    3 -> "Tháng này"
-                    4 -> "Năm này"
+                    0 -> "Hôm nay"
+                    1 -> "Tuần này"
+                    2 -> "Tháng này"
+                    3 -> "Năm này"
                     else -> null
                 }
             }.attach()
@@ -64,19 +61,18 @@ class InvoiceFragment : Fragment() {
         _binding = null
     }
 
-    class ViewPagerHistoryAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
+    class ViewPagerHistoryInvoiceAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                0 -> ExceptedInvoiceFragment()
-                1 -> DailyInvoiceFragment()
-                2 -> WeeklyInvoiceFragment()
-                3 -> MonthlyInvoiceFragment()
-                4 -> YearlyInvoiceFragment()
+                0 -> DailyInvoiceFragment()
+                1 -> WeeklyInvoiceFragment()
+                2 -> MonthlyInvoiceFragment()
+                3 -> YearlyInvoiceFragment()
                 else -> throw IllegalArgumentException("(HistoryInvoiceFragment) Invalid position")
             }
         }
 
-        override fun getItemCount(): Int = 5
+        override fun getItemCount(): Int = 4
     }
 
 }

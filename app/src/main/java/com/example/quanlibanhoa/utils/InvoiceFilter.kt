@@ -6,7 +6,15 @@ import java.util.*
 object InvoiceFilter {
 
     private val vietnamTimeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh")
+    private const val MILLIS_PER_DAY = 86_400_000L
 
+    // 🔧 Chuẩn hóa ngày về 00:00:00.000 theo múi giờ Việt Nam (tối ưu hiệu năng)
+    private fun normalizeDateToStartOfDayFast(date: Date): Long {
+        val offset = vietnamTimeZone.getOffset(date.time)
+        return (date.time + offset) / MILLIS_PER_DAY * MILLIS_PER_DAY - offset
+    }
+
+    // 🔧 Lấy khoảng thời gian bắt đầu & kết thúc theo kỳ (ngày / tuần / tháng / năm)
     private fun getStartAndEndDates(period: String): Pair<Date, Date> {
         val calendar = Calendar.getInstance(vietnamTimeZone)
 
@@ -21,12 +29,14 @@ object InvoiceFilter {
                 calendar.set(Calendar.HOUR_OF_DAY, 23)
                 calendar.set(Calendar.MINUTE, 59)
                 calendar.set(Calendar.SECOND, 59)
+                calendar.set(Calendar.MILLISECOND, 999)
                 val end = calendar.time
                 Pair(start, end)
             }
+
             "thisWeek" -> {
                 calendar.firstDayOfWeek = Calendar.MONDAY
-                calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
+                calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
                 calendar.set(Calendar.HOUR_OF_DAY, 0)
                 calendar.set(Calendar.MINUTE, 0)
                 calendar.set(Calendar.SECOND, 0)
@@ -38,6 +48,7 @@ object InvoiceFilter {
                 val end = calendar.time
                 Pair(start, end)
             }
+
             "thisMonth" -> {
                 calendar.set(Calendar.DAY_OF_MONTH, 1)
                 calendar.set(Calendar.HOUR_OF_DAY, 0)
@@ -51,6 +62,7 @@ object InvoiceFilter {
                 val end = calendar.time
                 Pair(start, end)
             }
+
             "thisYear" -> {
                 calendar.set(Calendar.DAY_OF_YEAR, 1)
                 calendar.set(Calendar.HOUR_OF_DAY, 0)
@@ -64,56 +76,58 @@ object InvoiceFilter {
                 val end = calendar.time
                 Pair(start, end)
             }
+
             else -> throw IllegalArgumentException("Invalid period: $period")
         }
     }
 
-    fun filterInvoices(
-        invoices: List<InvoiceWithDetails>,
-        period: String
-    ): List<InvoiceWithDetails> {
-
-        val now = Calendar.getInstance(vietnamTimeZone).time
-
-        // 🟢 Lọc hóa đơn đến hạn
-        if (period == "due" || period == "denHan") {
-            val uncompleted = invoices.filter {
-                !it.invoice.isCompleted
+    // 🔹 Lọc hóa đơn chưa đến hạn
+    fun filterNotYetDue(invoices: List<InvoiceWithDetails>): List<InvoiceWithDetails> {
+        val now = normalizeDateToStartOfDayFast(Date())
+        return invoices.asSequence()
+            .filter {
+                !it.invoice.isCompleted && normalizeDateToStartOfDayFast(it.invoice.date) > now
             }
-
-            // Đến hạn hoặc muộn so với giờ VN
-            val overdueOrDue = uncompleted.filter {
-                val due = convertToVietnamTime(it.invoice.date)
-                due.before(now) || due == now
-            }
-
-            // Chưa đến hạn
-            val notYetDue = uncompleted.filter {
-                val due = convertToVietnamTime(it.invoice.date)
-                due.after(now)
-            }
-
-            val sortedOverdue = overdueOrDue.sortedBy { it.invoice.date }
-            val sortedUpcoming = notYetDue.sortedBy { it.invoice.date }
-
-            return sortedOverdue + sortedUpcoming
-        }
-
-        // 🟡 Lọc theo khoảng thời gian
-        val (start, end) = getStartAndEndDates(period)
-
-        return invoices
-            .filter { invoice ->
-                val date = convertToVietnamTime(invoice.invoice.date)
-                (date.after(start) && date.before(end)) || date == start || date == end
-            }
-            .sortedByDescending { it.invoice.createdAt }
+            .sortedBy { it.invoice.date }
+            .toList()
     }
 
-    // 🔧 Hàm chuyển thời gian về múi giờ Việt Nam
-    private fun convertToVietnamTime(date: Date): Date {
-        val calendar = Calendar.getInstance(vietnamTimeZone)
-        calendar.time = date
-        return calendar.time
+    // 🔹 Lọc hóa đơn đến hạn hôm nay
+    fun filterDueToday(invoices: List<InvoiceWithDetails>): List<InvoiceWithDetails> {
+        val now = normalizeDateToStartOfDayFast(Date())
+        return invoices.asSequence()
+            .filter {
+                !it.invoice.isCompleted && normalizeDateToStartOfDayFast(it.invoice.date) == now
+            }
+            .sortedBy { it.invoice.date }
+            .toList()
+    }
+
+    // 🔹 Lọc hóa đơn quá hạn
+    fun filterOverdue(invoices: List<InvoiceWithDetails>): List<InvoiceWithDetails> {
+        val now = normalizeDateToStartOfDayFast(Date())
+        return invoices.asSequence()
+            .filter {
+                !it.invoice.isCompleted && normalizeDateToStartOfDayFast(it.invoice.date) < now
+            }
+            .sortedBy { it.invoice.date }
+            .toList()
+    }
+
+    // 🔹 Lọc hóa đơn hoàn thành theo kỳ (ngày / tuần / tháng / năm)
+    fun filterInvoices(invoices: List<InvoiceWithDetails>, period: String): List<InvoiceWithDetails> {
+        val (start, end) = getStartAndEndDates(period)
+        val startMs = start.time
+        val endMs = end.time
+        val offset = vietnamTimeZone.getOffset(startMs)
+
+        return invoices.asSequence()
+            .filter { inv ->
+                if (!inv.invoice.isCompleted) return@filter false
+                val dateMs = inv.invoice.date.time + offset
+                dateMs in startMs..endMs
+            }
+            .sortedByDescending { it.invoice.createdAt }
+            .toList()
     }
 }

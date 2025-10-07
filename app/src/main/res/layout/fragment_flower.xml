@@ -76,17 +76,22 @@
             tools:ignore="TouchTargetSizeCheck,VisualLintTextFieldSize" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <LinearLayout
         android:id="@+id/deleteToolbar"
         style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:elevation="4dp"
         android:gravity="start"
         android:orientation="horizontal"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_search"
         tools:visibility="visible">
 
         <Button
@@ -97,9 +102,8 @@
             android:backgroundTint="@color/red_500"
             android:text="@string/action_delete_selection"
             android:textAllCaps="false"
-            android:padding="5dp"
             android:textColor="?attr/colorOnError"
-            android:textSize="14sp"
+            android:textSize="12sp"
             app:cornerRadius="8dp"
             tools:ignore="TextContrastCheck" />
 
@@ -107,13 +111,13 @@
             android:id="@+id/btnClearSelection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
             android:backgroundTint="@color/my_light_primary"
             android:contentDescription="@string/action_clear_selection"
             android:text="@string/action_clear_selection"
-            android:layout_marginStart="12dp"
             android:textAllCaps="false"
             android:textColor="?attr/colorOnError"
-            android:textSize="14sp"
+            android:textSize="12sp"
             app:cornerRadius="8dp"
             tools:ignore="ButtonStyle,TextContrastCheck" />
 

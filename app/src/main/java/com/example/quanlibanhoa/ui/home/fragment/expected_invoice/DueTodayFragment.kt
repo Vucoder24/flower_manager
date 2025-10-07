@@ -1,4 +1,4 @@
-package com.example.quanlibanhoa.ui.home.fragment.invoice
+package com.example.quanlibanhoa.ui.home.fragment.expected_invoice
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -10,6 +10,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
@@ -17,20 +18,21 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.quanlibanhoa.data.entity.InvoiceWithDetails
-import com.example.quanlibanhoa.databinding.FragmentWeeklyInvoiceBinding
+import com.example.quanlibanhoa.databinding.FragmentDueTodayBinding
 import com.example.quanlibanhoa.ui.edit_invoice.EditInvoiceActivity
 import com.example.quanlibanhoa.ui.home.HomeActivity
 import com.example.quanlibanhoa.ui.home.adapter.InvoiceHistoryAdapter
+import com.example.quanlibanhoa.ui.home.dialog.InvoiceDetailBottomSheetFragment
 import com.example.quanlibanhoa.ui.home.viewmodel.InvoiceViewModel
 import com.example.quanlibanhoa.ui.home.viewmodel.InvoiceViewModelFactory
 import com.example.quanlibanhoa.ui.home.viewmodel.StateInvoice
 import com.example.quanlibanhoa.utils.InvoiceFilter
+import com.example.quanlibanhoa.utils.SwipeToToggleCallback
 
-class WeeklyInvoiceFragment : Fragment() {
+class DueTodayFragment : Fragment() {
 
-    private var _binding: FragmentWeeklyInvoiceBinding? = null
+    private var _binding: FragmentDueTodayBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: InvoiceHistoryAdapter
     private var currentInvoices = listOf<InvoiceWithDetails>()
@@ -46,7 +48,7 @@ class WeeklyInvoiceFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentWeeklyInvoiceBinding.inflate(
+        _binding = FragmentDueTodayBinding.inflate(
             layoutInflater,
             container,
             false
@@ -63,7 +65,8 @@ class WeeklyInvoiceFragment : Fragment() {
                     Intent(requireContext(), EditInvoiceActivity::class.java)
                 intent.putExtra("invoice_data", invoice)
                 requireContext().startActivity(intent)
-                (requireContext() as HomeActivity).slideNewActivity()},
+                (requireContext() as HomeActivity).slideNewActivity()
+            },
             onClick = { invoice ->
                 // Xử lý sự kiện khi nhấp vào hóa đơn (Xem chi tiết)
                 if (!adapter.isMultiSelectMode) {
@@ -82,47 +85,39 @@ class WeeklyInvoiceFragment : Fragment() {
                 updateDeleteToolbarText(count)
             }
         )
-        binding.rycWeeklyInvoice.layoutManager = LinearLayoutManager(requireContext())
-        binding.rycWeeklyInvoice.adapter = adapter
+        binding.rycDueToday.layoutManager = LinearLayoutManager(requireContext())
+        binding.rycDueToday.adapter = adapter
         addEvent()
         observerData()
         setupSearchView()
     }
 
     private fun addEvent() {
-        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean = false
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.bindingAdapterPosition
+        val itemTouchHelper = ItemTouchHelper(
+            SwipeToToggleCallback { position ->
                 val invoiceWithDetails = adapter.currentList[position]
                 val invoice = invoiceWithDetails.invoice
-
-                // Gọi ViewModel để toggle trạng thái
-                invoiceViewModel.toggleIsCompleted(invoice.id, invoice.isCompleted)
-
-                // Cập nhật UI tạm thời trong adapter
-                adapter.toggleCompleted(invoiceWithDetails)
+                invoiceViewModel.toggleIsCompleted(
+                    invoice.id,
+                    invoice.isCompleted,
+                    1
+                )
+                // Không notify!
             }
-        })
-
-        itemTouchHelper.attachToRecyclerView(binding.rycWeeklyInvoice)
+        )
+        itemTouchHelper.attachToRecyclerView(binding.rycDueToday)
     }
 
     private fun observerData() {
-        invoiceViewModel.invoiceWithDetailsStateList.observe(viewLifecycleOwner){
-            // Lọc hóa đơn theo tiêu chí tuần này
+        invoiceViewModel.invoiceWithDetailsStateList.observe(viewLifecycleOwner) {
+            // Lọc hóa đơn theo tiêu chí hôm nay
             val filteredInvoices =
-                InvoiceFilter.filterInvoices(it, "thisWeek")
+                InvoiceFilter.filterDueToday(it)
             currentInvoices = filteredInvoices
             adapter.submitList(filteredInvoices)
         }
         // 🔥 THEO DÕI TRẠNG THÁI XÓA (Cần có StateInvoice tương ứng trong ViewModel)
-        invoiceViewModel.deleteInvoiceState2.observe(viewLifecycleOwner) { result ->
+        invoiceViewModel.deleteInvoiceState5.observe(viewLifecycleOwner) { result ->
             if (result == StateInvoice.IDLE) return@observe
             binding.btnConfirmDelete.isEnabled = true
             binding.btnConfirmDelete.alpha = 1f
@@ -133,20 +128,36 @@ class WeeklyInvoiceFragment : Fragment() {
                         "Xóa hóa đơn thành công.",
                         Toast.LENGTH_SHORT
                     ).show()
-                    invoiceViewModel.resetDeleteState(2)
+                    invoiceViewModel.resetDeleteState(5)
                 }
+
                 StateInvoice.DELETE_INVOICE_ERROR -> {
                     Toast.makeText(
                         requireContext(),
                         "Lỗi khi xóa hóa đơn, vui lòng thử lại!",
-                        Toast.LENGTH_SHORT).show()
-                    invoiceViewModel.resetDeleteState(2)
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    invoiceViewModel.resetDeleteState(5)
                 }
+
                 else -> {}
+            }
+        }
+        // theo dõi cập nhật iscomplete
+        invoiceViewModel.editInvoiceState1.observe(viewLifecycleOwner){
+            if (it == StateInvoice.IDLE) return@observe
+            if(it == StateInvoice.EDIT_INVOICE_ERROR){
+                Toast.makeText(
+                    requireContext(),
+                    "Cập nhật trạng thái đơn hàng không thành công , vui lòng tử lại!",
+                    Toast.LENGTH_SHORT
+                ).show()
+                invoiceViewModel.resetEditState(1)
             }
         }
     }
 
+    // --- HÀM MỚI: Hiển thị Bottom Sheet Detail ---
     private fun showInvoiceDetailPopup(invoice: InvoiceWithDetails) {
         // Khởi tạo BottomSheetFragment, truyền dữ liệu hóa đơn đầy đủ
         val detailSheet = InvoiceDetailBottomSheetFragment(invoice)
@@ -168,7 +179,7 @@ class WeeklyInvoiceFragment : Fragment() {
                 //GỌI HÀM XÓA TRONG VIEWMODEL
                 binding.btnConfirmDelete.isEnabled = false
                 binding.btnConfirmDelete.alpha = 0.8f
-                invoiceViewModel.deleteInvoicesByIds(invoiceIds, 2)
+                invoiceViewModel.deleteInvoicesByIds(invoiceIds, 5)
                 adapter.clearSelection()
             }
             .setNegativeButton("Hủy", null)
@@ -228,7 +239,7 @@ class WeeklyInvoiceFragment : Fragment() {
 
         // 3. Xử lý khi người dùng nhấn "Search" trên bàn phím
         binding.etSearch.setOnEditorActionListener { v: TextView?, actionId: Int, event ->
-            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 // Ẩn bàn phím và bỏ focus
                 hideKeyboard(v)
                 binding.etSearch.clearFocus()
@@ -260,9 +271,6 @@ class WeeklyInvoiceFragment : Fragment() {
         val listToSearch = currentInvoices
 
         val result = if (query.isNullOrBlank()) {
-            // Khi query rỗng (ngay sau khi mở hoặc clear), bạn có thể không cần hiển thị lại
-            // list đầy đủ, vì việc này được xử lý trong onTextChanged.
-            // Tuy nhiên, nếu bạn muốn tìm kiếm query rỗng thì cứ để filtered.
             listToSearch
         } else {
             listToSearch.filter {

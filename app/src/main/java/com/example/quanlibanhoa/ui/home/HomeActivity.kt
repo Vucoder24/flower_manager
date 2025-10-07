@@ -13,6 +13,7 @@ import com.example.quanlibanhoa.R
 import com.example.quanlibanhoa.databinding.ActivityHomeBinding
 import com.example.quanlibanhoa.ui.home.fragment.AddFlowerFragment
 import com.example.quanlibanhoa.ui.home.fragment.AddInvoiceFragment
+import com.example.quanlibanhoa.ui.home.fragment.ExceptedInvoiceFragment
 import com.example.quanlibanhoa.ui.home.fragment.FlowerFragment
 import com.example.quanlibanhoa.ui.home.fragment.InvoiceFragment
 import com.example.quanlibanhoa.ui.home.fragment.ReportFragment
@@ -83,6 +84,7 @@ class HomeActivity : AppCompatActivity() {
                 R.id.flower -> switchFragment(FlowerFragment())
                 R.id.add_flower -> switchFragment(AddFlowerFragment())
                 R.id.add_invoice -> switchFragment(AddInvoiceFragment())
+                R.id.excepted_invoice -> switchFragment(ExceptedInvoiceFragment())
                 R.id.invoice -> switchFragment(InvoiceFragment())
                 R.id.report -> switchFragment(ReportFragment())
                 else -> {}

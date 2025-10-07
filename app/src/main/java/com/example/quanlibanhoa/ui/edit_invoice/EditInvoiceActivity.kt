@@ -2,7 +2,6 @@ package com.example.quanlibanhoa.ui.edit_invoice
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -27,8 +26,6 @@ import com.example.quanlibanhoa.ui.home.viewmodel.InvoiceViewModelFactory
 import com.example.quanlibanhoa.ui.home.viewmodel.StateInvoice
 import com.example.quanlibanhoa.utils.toVNOnlyK
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
@@ -96,10 +93,8 @@ class EditInvoiceActivity : AppCompatActivity() {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime()
             val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-            val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
             binding.edtDateInvoice.setText(localDateTime.toLocalDate().format(dateFormatter))
-            binding.edtTimeInvoice.setText(localDateTime.toLocalTime().format(timeFormatter))
             // loại giao dịch
             when (invoice.loaiGiaoDich) {
                 getString(R.string.action_transfer) -> binding.rbTransfer.isChecked = true
@@ -167,7 +162,7 @@ class EditInvoiceActivity : AppCompatActivity() {
                     ).show()
                     selectedFlowers.clear()
                     adapter.notifyDataSetChanged()
-                    invoiceViewModel.resetEditState()
+                    invoiceViewModel.resetEditState(0)
                     finish()
                     slideOutActivity()
                 }
@@ -178,7 +173,7 @@ class EditInvoiceActivity : AppCompatActivity() {
                         "Cập nhật hóa đơn thất bại, vui lòng thử lại!",
                         Toast.LENGTH_SHORT
                     ).show()
-                    invoiceViewModel.resetEditState()
+                    invoiceViewModel.resetEditState(0)
                 }
 
                 else -> {}
@@ -190,18 +185,10 @@ class EditInvoiceActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun addEvent() {
         val myFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-        val myTimeFormat = DateTimeFormatter.ofPattern("HH:mm")
         val invoiceDate = invoiceWithDetails?.invoice?.date ?: Date()
         var selectedDate = invoiceDate.toInstant()
             .atZone(ZoneId.systemDefault())
             .toLocalDate()
-
-        val nowTime = invoiceDate.toInstant()
-            .atZone(ZoneId.systemDefault())
-            .toLocalTime()
-
-        var selectedHour = nowTime.hour
-        var selectedMinute = nowTime.minute
 
 
         // Chọn ngày
@@ -217,24 +204,6 @@ class EditInvoiceActivity : AppCompatActivity() {
                 selectedDate.dayOfMonth
             )
             datePicker.show()
-        }
-
-        // Chọn giờ
-        binding.edtTimeInvoice.setOnClickListener {
-            val timePicker = TimePickerDialog(
-                this,
-                { _, hourOfDay, minute ->
-                    selectedHour = hourOfDay
-                    selectedMinute = minute
-                    binding.edtTimeInvoice.setText(
-                        LocalTime.of(selectedHour, selectedMinute).format(myTimeFormat)
-                    )
-                },
-                selectedHour,
-                selectedMinute,
-                true
-            )
-            timePicker.show()
         }
 
         // Chọn hoa
@@ -284,22 +253,11 @@ class EditInvoiceActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val now = LocalDate.now()
-            if (selectedDate.isAfter(now) && isComplete) {
-                Toast.makeText(
-                    this,
-                    "Không thể đánh dấu 'Đã hoàn thành' cho đơn hàng có ngày giao trong tương lai!",
-                    Toast.LENGTH_LONG
-                ).show()
-                return@setOnClickListener
-            }
-
             binding.btnSaveInvoice.isEnabled = false
             binding.btnSaveInvoice.alpha = 0.8f
 
-            val selectedTime = LocalTime.of(selectedHour, selectedMinute)
-            val dateTime = LocalDateTime.of(selectedDate, selectedTime)
-            val date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant())
+            val date =
+                Date.from(selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
 
             val oldId = invoiceWithDetails?.invoice?.id ?: 0
 

@@ -17,9 +17,14 @@
         android:icon="@drawable/ic_add_invoice"
         app:iconSize="24dp" />
 
-    <item android:title="@string/title_array_invoice"
-        android:id="@+id/invoice"
+    <item android:title="@string/title_excepted_invoice"
+        android:id="@+id/excepted_invoice"
         android:icon="@drawable/ic_invoice"
+        app:iconSize="24dp" />
+
+    <item android:title="@string/title_history_invoice"
+        android:id="@+id/invoice"
+        android:icon="@drawable/ic_history"
         app:iconSize="24dp" />
 
     <item android:title="@string/title_report"

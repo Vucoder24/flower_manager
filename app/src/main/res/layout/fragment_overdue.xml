@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.home.fragment.history_invoice.MonthlyInvoiceFragment">
+    tools:context=".ui.home.fragment.expected_invoice.OverdueFragment">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_search"
         android:layout_width="0dp"
@@ -113,13 +114,13 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/ryc_monthly_invoice"
+        android:id="@+id/ryc_overdue"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="6dp"
         android:clickable="true"
         android:focusable="true"
-        android:nestedScrollingEnabled="true"
+        android:nestedScrollingEnabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -1,4 +1,4 @@
-package com.example.quanlibanhoa.ui.home.fragment.invoice
+package com.example.quanlibanhoa.ui.home.fragment.history_invoice
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -17,18 +17,20 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quanlibanhoa.data.entity.InvoiceWithDetails
-import com.example.quanlibanhoa.databinding.FragmentExceptedInvoiceBinding
+import com.example.quanlibanhoa.databinding.FragmentDailyInvoiceBinding
 import com.example.quanlibanhoa.ui.edit_invoice.EditInvoiceActivity
 import com.example.quanlibanhoa.ui.home.HomeActivity
 import com.example.quanlibanhoa.ui.home.adapter.InvoiceHistoryAdapter
+import com.example.quanlibanhoa.ui.home.dialog.InvoiceDetailBottomSheetFragment
 import com.example.quanlibanhoa.ui.home.viewmodel.InvoiceViewModel
 import com.example.quanlibanhoa.ui.home.viewmodel.InvoiceViewModelFactory
 import com.example.quanlibanhoa.ui.home.viewmodel.StateInvoice
 import com.example.quanlibanhoa.utils.InvoiceFilter
 
-class ExceptedInvoiceFragment : Fragment() {
 
-    private var _binding: FragmentExceptedInvoiceBinding? = null
+class DailyInvoiceFragment : Fragment() {
+
+    private var _binding: FragmentDailyInvoiceBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: InvoiceHistoryAdapter
     private var currentInvoices = listOf<InvoiceWithDetails>()
@@ -44,7 +46,7 @@ class ExceptedInvoiceFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentExceptedInvoiceBinding.inflate(
+        _binding = FragmentDailyInvoiceBinding.inflate(
             layoutInflater,
             container,
             false
@@ -57,8 +59,7 @@ class ExceptedInvoiceFragment : Fragment() {
         // 🔥 KHỞI TẠO ADAPTER VỚI CÁC CALLBACK XÓA
         adapter = InvoiceHistoryAdapter(
             onEdit = { invoice ->
-                val intent =
-                    Intent(requireContext(), EditInvoiceActivity::class.java)
+                val intent = Intent(requireContext(), EditInvoiceActivity::class.java)
                 intent.putExtra("invoice_data", invoice)
                 requireContext().startActivity(intent)
                 (requireContext() as HomeActivity).slideNewActivity()
@@ -81,21 +82,22 @@ class ExceptedInvoiceFragment : Fragment() {
                 updateDeleteToolbarText(count)
             }
         )
-        binding.rycExceptedInvoice.layoutManager = LinearLayoutManager(requireContext())
-        binding.rycExceptedInvoice.adapter = adapter
+        binding.rycDailyInvoice.layoutManager = LinearLayoutManager(requireContext())
+        binding.rycDailyInvoice.adapter = adapter
         observerData()
         setupSearchView()
     }
+
     private fun observerData() {
         invoiceViewModel.invoiceWithDetailsStateList.observe(viewLifecycleOwner) {
             // Lọc hóa đơn theo tiêu chí hôm nay
             val filteredInvoices =
-                InvoiceFilter.filterInvoices(it, "due")
+                InvoiceFilter.filterInvoices(it, "today")
             currentInvoices = filteredInvoices
             adapter.submitList(filteredInvoices)
         }
         // 🔥 THEO DÕI TRẠNG THÁI XÓA (Cần có StateInvoice tương ứng trong ViewModel)
-        invoiceViewModel.deleteInvoiceState5.observe(viewLifecycleOwner) { result ->
+        invoiceViewModel.deleteInvoiceState1.observe(viewLifecycleOwner) { result ->
             if (result == StateInvoice.IDLE) return@observe
             binding.btnConfirmDelete.isEnabled = true
             binding.btnConfirmDelete.alpha = 1f
@@ -106,18 +108,15 @@ class ExceptedInvoiceFragment : Fragment() {
                         "Xóa hóa đơn thành công.",
                         Toast.LENGTH_SHORT
                     ).show()
-                    invoiceViewModel.resetDeleteState(5)
+                    invoiceViewModel.resetDeleteState(1)
                 }
-
                 StateInvoice.DELETE_INVOICE_ERROR -> {
                     Toast.makeText(
                         requireContext(),
                         "Lỗi khi xóa hóa đơn, vui lòng thử lại!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    invoiceViewModel.resetDeleteState(5)
+                        Toast.LENGTH_SHORT).show()
+                    invoiceViewModel.resetDeleteState(1)
                 }
-
                 else -> {}
             }
         }
@@ -156,7 +155,7 @@ class ExceptedInvoiceFragment : Fragment() {
                 //GỌI HÀM XÓA TRONG VIEWMODEL
                 binding.btnConfirmDelete.isEnabled = false
                 binding.btnConfirmDelete.alpha = 0.8f
-                invoiceViewModel.deleteInvoicesByIds(invoiceIds, 5)
+                invoiceViewModel.deleteInvoicesByIds(invoiceIds, 1)
                 adapter.clearSelection()
             }
             .setNegativeButton("Hủy", null)
@@ -248,6 +247,9 @@ class ExceptedInvoiceFragment : Fragment() {
         val listToSearch = currentInvoices
 
         val result = if (query.isNullOrBlank()) {
+            // Khi query rỗng (ngay sau khi mở hoặc clear), bạn có thể không cần hiển thị lại
+            // list đầy đủ, vì việc này được xử lý trong onTextChanged.
+            // Tuy nhiên, nếu bạn muốn tìm kiếm query rỗng thì cứ để filtered.
             listToSearch
         } else {
             listToSearch.filter {

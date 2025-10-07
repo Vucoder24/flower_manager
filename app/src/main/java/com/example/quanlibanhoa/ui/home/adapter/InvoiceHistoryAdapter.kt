@@ -1,9 +1,11 @@
 package com.example.quanlibanhoa.ui.home.adapter
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -13,6 +15,9 @@ import com.example.quanlibanhoa.data.entity.InvoiceWithDetails
 import com.example.quanlibanhoa.databinding.ItemHistoryInvoiceBinding
 import com.example.quanlibanhoa.utils.toFormattedString
 import com.example.quanlibanhoa.utils.toVNOnlyK
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.Date
 
 class InvoiceHistoryAdapter(
     private val onEdit: (InvoiceWithDetails) -> Unit,
@@ -36,6 +41,7 @@ class InvoiceHistoryAdapter(
     inner class ViewHolder(val binding: ItemHistoryInvoiceBinding) :
         RecyclerView.ViewHolder(binding.root)
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val invoiceWithDetails = getItem(position)
@@ -48,6 +54,10 @@ class InvoiceHistoryAdapter(
                     "(Lợi nhuận: ${invoice.tongLoiNhuan.toInt().toVNOnlyK()})"
             val formattedDate = invoice.date.toFormattedString()
             tvDate.text = "🕒 $formattedDate"
+
+            val currentDate = LocalDate.now()
+            val invoiceDate = convertToLocalDate(invoice.date)
+
             when (invoice.isCompleted) {
                 true -> {
                     tvStatus.text = holder.itemView.context
@@ -55,20 +65,43 @@ class InvoiceHistoryAdapter(
                     tvStatus.setTextColor(
                         ContextCompat.getColor(
                             holder.itemView.context,
-                            R.color.my_light_primary
+                            R.color.green_600
                         )
                     )
                 }
-
                 false -> {
-                    tvStatus.text = holder.itemView.context
-                        .getString(R.string.action_wait_ship)
-                    tvStatus.setTextColor(
-                        ContextCompat.getColor(
-                            holder.itemView.context,
-                            R.color.my_light_primary
-                        )
-                    )
+                    when {
+                        invoiceDate.isAfter(currentDate) -> { // Chưa đến ngày
+                            tvStatus.text = holder.itemView.context
+                                .getString(R.string.status_not_due_yet)
+                            tvStatus.setTextColor(
+                                ContextCompat.getColor(
+                                    holder.itemView.context,
+                                    R.color.yellow_600
+                                )
+                            )
+                        }
+                        invoiceDate.isEqual(currentDate) -> { // Đến ngày
+                            tvStatus.text = holder.itemView.context
+                                .getString(R.string.status_due_today)
+                            tvStatus.setTextColor(
+                                ContextCompat.getColor(
+                                    holder.itemView.context,
+                                    R.color.orange
+                                )
+                            )
+                        }
+                        invoiceDate.isBefore(currentDate) -> { // Quá hạn
+                            tvStatus.text = holder.itemView.context
+                                .getString(R.string.status_over_due)
+                            tvStatus.setTextColor(
+                                ContextCompat.getColor(
+                                    holder.itemView.context,
+                                    R.color.red_700
+                                )
+                            )
+                        }
+                    }
                 }
             }
 
@@ -131,6 +164,13 @@ class InvoiceHistoryAdapter(
         onSelectionCountChanged(selectedInvoices.size)
         val index = currentList.indexOf(item)
         if (index != -1) notifyItemChanged(index)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun convertToLocalDate(date: Date): LocalDate {
+        return date.toInstant()
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
     }
 
     fun clearSelection() {

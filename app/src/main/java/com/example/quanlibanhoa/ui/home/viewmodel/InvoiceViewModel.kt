@@ -28,6 +28,16 @@ class InvoiceViewModel(
     }
     val editInvoiceState: LiveData<StateInvoice> = _editInvoiceState.distinctUntilChanged()
 
+    private val _editInvoiceState1 = MutableLiveData<StateInvoice>().apply {
+        value = StateInvoice.IDLE // init về IDLE
+    }
+    val editInvoiceState1: LiveData<StateInvoice> = _editInvoiceState1.distinctUntilChanged()
+
+    private val _editInvoiceState2 = MutableLiveData<StateInvoice>().apply {
+        value = StateInvoice.IDLE // init về IDLE
+    }
+    val editInvoiceState2: LiveData<StateInvoice> = _editInvoiceState2.distinctUntilChanged()
+
     private val _deleteInvoiceState1 = MutableLiveData<StateInvoice>().apply {
         value = StateInvoice.IDLE // init về IDLE
     }
@@ -53,6 +63,16 @@ class InvoiceViewModel(
     }
     val deleteInvoiceState5: LiveData<StateInvoice> = _deleteInvoiceState5.distinctUntilChanged()
 
+    private val _deleteInvoiceState6 = MutableLiveData<StateInvoice>().apply {
+        value = StateInvoice.IDLE // init về IDLE
+    }
+    val deleteInvoiceState6: LiveData<StateInvoice> = _deleteInvoiceState6.distinctUntilChanged()
+
+    private val _deleteInvoiceState7 = MutableLiveData<StateInvoice>().apply {
+        value = StateInvoice.IDLE // init về IDLE
+    }
+    val deleteInvoiceState7: LiveData<StateInvoice> = _deleteInvoiceState7.distinctUntilChanged()
+
     val invoiceWithDetailsStateList: LiveData<List<InvoiceWithDetails>> =
         repository.getAllInvoicesWithDetails().distinctUntilChanged()
 
@@ -71,8 +91,12 @@ class InvoiceViewModel(
         _addInvoiceState.value = StateInvoice.IDLE
     }
 
-    fun resetEditState() {
-        _editInvoiceState.value = StateInvoice.IDLE
+    fun resetEditState(id: Int) {
+        when(id){
+            0 -> {_editInvoiceState.value = StateInvoice.IDLE}
+            1 -> {_editInvoiceState1.value = StateInvoice.IDLE}
+            2 -> {_editInvoiceState2.value = StateInvoice.IDLE}
+        }
     }
 
     fun resetDeleteState(id: Int) {
@@ -95,6 +119,12 @@ class InvoiceViewModel(
 
             5 -> {
                 _deleteInvoiceState5.value = StateInvoice.IDLE
+            }
+            6 -> {
+                _deleteInvoiceState6.value = StateInvoice.IDLE
+            }
+            7 -> {
+                _deleteInvoiceState7.value = StateInvoice.IDLE
             }
         }
     }
@@ -124,6 +154,12 @@ class InvoiceViewModel(
                     5 -> {
                         _deleteInvoiceState5.postValue(StateInvoice.DELETE_INVOICE_SUCCESS)
                     }
+                    6 -> {
+                        _deleteInvoiceState5.postValue(StateInvoice.DELETE_INVOICE_SUCCESS)
+                    }
+                    7 -> {
+                        _deleteInvoiceState5.postValue(StateInvoice.DELETE_INVOICE_SUCCESS)
+                    }
                 }
             } catch (_: Exception) {
                 when (id) {
@@ -146,6 +182,12 @@ class InvoiceViewModel(
                     5 -> {
                         _deleteInvoiceState5.postValue(StateInvoice.DELETE_INVOICE_ERROR)
                     }
+                    6 -> {
+                        _deleteInvoiceState5.postValue(StateInvoice.DELETE_INVOICE_ERROR)
+                    }
+                    7 -> {
+                        _deleteInvoiceState5.postValue(StateInvoice.DELETE_INVOICE_ERROR)
+                    }
                 }
             }
         }
@@ -162,13 +204,17 @@ class InvoiceViewModel(
         }
     }
 
-    fun toggleIsCompleted(invoiceId: Int, currentState: Boolean) {
+    fun toggleIsCompleted(invoiceId: Int, currentState: Boolean, id: Int) {
         viewModelScope.launch {
             try {
                 delay(300L)  // Delay 300ms để snap back xong (có thể chỉnh)
                 repository.updateInvoiceCompleted(invoiceId, !currentState)
             } catch (_: Exception) {
-                _editInvoiceState.postValue(StateInvoice.EDIT_INVOICE_ERROR)
+                when(id){
+                    0 -> {_editInvoiceState.postValue(StateInvoice.EDIT_INVOICE_ERROR)}
+                    1 -> {_editInvoiceState.postValue(StateInvoice.EDIT_INVOICE_ERROR)}
+                    2 -> {_editInvoiceState.postValue(StateInvoice.EDIT_INVOICE_ERROR)}
+                }
             }
         }
     }

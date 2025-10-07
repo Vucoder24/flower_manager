@@ -1,23 +1,22 @@
 package com.example.quanlibanhoa.ui.home.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.example.quanlibanhoa.databinding.FragmentReportBinding
+import com.example.quanlibanhoa.databinding.FragmentExceptedInvoiceBinding
 import com.example.quanlibanhoa.ui.home.fragment.expected_invoice.DueTodayFragment
 import com.example.quanlibanhoa.ui.home.fragment.expected_invoice.NotDueYetFragment
 import com.example.quanlibanhoa.ui.home.fragment.expected_invoice.OverdueFragment
 import com.google.android.material.tabs.TabLayoutMediator
 
+class ExceptedInvoiceFragment : Fragment() {
 
-class ReportFragment : Fragment() {
-
-    private var _binding: FragmentReportBinding? = null
+    private var _binding: FragmentExceptedInvoiceBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -25,7 +24,7 @@ class ReportFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentReportBinding.inflate(
+        _binding = FragmentExceptedInvoiceBinding.inflate(
             layoutInflater,
             container,
             false
@@ -45,14 +44,13 @@ class ReportFragment : Fragment() {
             binding.viewPagerHistory.isUserInputEnabled = false
             // nối tab layout với viewpager2
             TabLayoutMediator(
-                binding.tabLayoutReportInvoice,
+                binding.tabLayoutExceptedInvoice,
                 binding.viewPagerHistory
             ) { tab, position ->
                 tab.text = when (position) {
-                    0 -> "Hôm nay"
-                    1 -> "Tuần này"
-                    2 -> "Tháng này"
-                    3 -> "Năm này"
+                    0 -> "Chưa đến ngày"
+                    1 -> "Đến ngày giao"
+                    2 -> "Quá hạn"
                     else -> null
                 }
             }.attach()
@@ -71,12 +69,10 @@ class ReportFragment : Fragment() {
                 0 -> NotDueYetFragment()
                 1 -> DueTodayFragment()
                 2 -> OverdueFragment()
-                3 -> OverdueFragment()
                 else -> throw IllegalArgumentException("(ExceptedInvoiceFragment) Invalid position")
             }
         }
 
-        override fun getItemCount(): Int = 4
+        override fun getItemCount(): Int = 3
     }
-
 }

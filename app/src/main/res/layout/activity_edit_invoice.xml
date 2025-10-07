@@ -151,56 +151,27 @@
             android:id="@+id/textViewDateTimeLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ngày và giờ:"
+            android:text="Ngày:"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/edtDateInvoice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:weightSum="2"
-            android:baselineAligned="false">
-
-            <EditText
-                android:id="@+id/edtDateInvoice"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:clickable="true"
-                android:drawableEnd="@drawable/ic_date"
-                android:drawableTint="@android:color/darker_gray"
-                android:focusable="false"
-                android:textSize="16sp"
-                android:importantForAutofill="no"
-                android:inputType="date"
-                android:gravity="center"
-                android:minHeight="48dp"
-                android:textStyle="bold"
-                tools:ignore="KeyboardInaccessibleWidget,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
-
-            <EditText
-                android:id="@+id/edtTimeInvoice"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:drawableEnd="@drawable/ic_time"
-                android:drawableTint="@android:color/darker_gray"
-                android:focusable="false"
-                android:textSize="16sp"
-                android:gravity="center"
-                android:importantForAutofill="no"
-                android:inputType="time"
-                android:minHeight="48dp"
-                android:textStyle="bold"
-                tools:ignore="KeyboardInaccessibleWidget,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
-
-        </LinearLayout>
+            android:layout_marginEnd="8dp"
+            android:clickable="true"
+            android:drawableEnd="@drawable/ic_date"
+            android:drawableTint="@android:color/darker_gray"
+            android:focusable="false"
+            android:textSize="17sp"
+            android:importantForAutofill="no"
+            android:inputType="date"
+            android:minHeight="48dp"
+            android:textStyle="bold"
+            tools:ignore="KeyboardInaccessibleWidget,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
 
         <Button
             android:id="@+id/btnAddFlower"

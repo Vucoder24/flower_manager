@@ -5,7 +5,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_add_invoice">Thêm Hóa Đơn</string>
-    <string name="title_array_invoice">Danh Sách Hóa Đơn</string>
+    <string name="title_history_invoice">Lịch Sử Hóa Đơn</string>
     <string name="title_report">Báo Cáo</string>
     <string name="action_set_image">Chọn ảnh</string>
     <string name="hint_name_flower">Nhập tên hoa</string>
@@ -34,7 +34,12 @@
     <string name="label_paymen_method">Phương thức thanh toán:</string>
     <string name="action_crash">Tiền mặt</string>
     <string name="action_transfer">Chuyển khoản</string>
-    <string name="action_wait_ship">Đang chờ giao</string>
-    <string name="action_complete_ship">Đã hoàn thành</string>
+    <string name="action_wait_ship">Chưa giao</string>
+    <string name="action_complete_ship">Đã giao</string>
+    <string name="status_due_today">Đến hạn giao</string>
+    <string name="status_over_due">Quá hạn giao</string>
+    <string name="status_not_due_yet">Chưa đến ngày giao</string>
     <string name="title_edit_invoice">Sửa Hóa Đơn</string>
+    <string name="title_excepted_invoice">Hóa Đơn Dự Kiến</string>
+    <string name="title_report_invoice">Báo Cáo Thống Ke</string>
 </resources>
