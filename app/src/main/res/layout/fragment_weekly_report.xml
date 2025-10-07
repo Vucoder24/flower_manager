@@ -1,14 +1,276 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollViewReport"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="12dp"
+    android:scrollbars="none"
+    android:fillViewport="true"
     tools:context=".ui.home.fragment.report_invoice.WeeklyReportFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content">
 
-</FrameLayout>
+        <!-- === KHỐI TỔNG QUAN === -->
+
+        <!-- Tổng số hóa đơn -->
+        <TextView
+            android:id="@+id/tvTotalInvoiceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="🧾 Tổng số hóa đơn:"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText,TextContrastCheck" />
+
+        <TextView
+            android:id="@+id/tvTotalInvoice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tvTotalInvoiceLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="HardcodedText" />
+
+        <!-- Tổng doanh thu -->
+        <TextView
+            android:id="@+id/tvTotalRevenueLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="💰 Tổng doanh thu:"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTotalInvoiceLabel"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/tvTotalRevenue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 ₫"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tvTotalRevenueLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="HardcodedText" />
+
+        <!-- Đường kẻ 1 -->
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="#DDDDDD"
+            app:layout_constraintTop_toBottomOf="@id/tvTotalRevenueLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Tổng lợi nhuận -->
+        <TextView
+            android:id="@+id/tvTotalProfitLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="📈 Tổng lợi nhuận:"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider1"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/tvTotalProfit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 ₫"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tvTotalProfitLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="HardcodedText" />
+
+        <!-- Tổng giảm giá -->
+        <TextView
+            android:id="@+id/tvTotalDiscountLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="🎁 Tổng giảm giá:"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTotalProfitLabel"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/tvTotalDiscount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 ₫"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tvTotalDiscountLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="HardcodedText" />
+
+        <!-- Đường kẻ 2 -->
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="#DDDDDD"
+            app:layout_constraintTop_toBottomOf="@id/tvTotalDiscountLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Tổng số lượng hoa bán ra -->
+        <TextView
+            android:id="@+id/tvTotalFlowerLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="🌸 Số lượng hoa đã bán ra:"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider2"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/tvTotalFlower"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 bông"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tvTotalFlowerLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="HardcodedText" />
+
+        <!-- Tổng số đơn chưa hoàn thành -->
+        <TextView
+            android:id="@+id/tvUncompletedLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="⚠️ Số đơn chưa giao:"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTotalFlowerLabel"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/tvUncompleted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tvUncompletedLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="HardcodedText" />
+
+        <!-- Đường kẻ lớn chia phần -->
+        <View
+            android:id="@+id/dividerTopProducts"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="20dp"
+            android:background="#BBBBBB"
+            app:layout_constraintTop_toBottomOf="@id/tvUncompletedLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- === KHỐI TOP SẢN PHẨM === -->
+        <TextView
+            android:id="@+id/tvTopProductTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="🌺 Top 10 hoa bán chạy nhất:"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dividerTopProducts"
+            tools:ignore="HardcodedText" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvTopProducts"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="-5dp"
+            android:layout_marginEnd="-5dp"
+            app:layout_constraintTop_toBottomOf="@id/tvTopProductTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Đường kẻ lớn trước top khách hàng -->
+        <View
+            android:id="@+id/dividerTopCustomers"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="20dp"
+            android:background="#BBBBBB"
+            app:layout_constraintTop_toBottomOf="@id/rvTopProducts"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- === KHỐI TOP KHÁCH HÀNG === -->
+        <TextView
+            android:id="@+id/tvTopCustomerTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="🥇 Top 10 khách hàng mua nhiều nhất:"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dividerTopCustomers"
+            tools:ignore="HardcodedText" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvTopCustomers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="-5dp"
+            android:layout_marginEnd="-5dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintTop_toBottomOf="@id/tvTopCustomerTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

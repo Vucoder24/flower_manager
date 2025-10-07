@@ -1,11 +1,13 @@
 package com.example.quanlibanhoa.ui.home.dialog
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +17,9 @@ import com.example.quanlibanhoa.ui.home.adapter.InvoiceDetailAdapter
 import com.example.quanlibanhoa.utils.toFormattedString
 import com.example.quanlibanhoa.utils.toVNOnlyK
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.Date
 
 class InvoiceDetailBottomSheetFragment(
     private val fullInvoice: InvoiceWithDetails
@@ -33,6 +38,7 @@ class InvoiceDetailBottomSheetFragment(
         )
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -50,6 +56,7 @@ class InvoiceDetailBottomSheetFragment(
     }
 
     // Hàm hiển thị dữ liệu lên layout
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     private fun displayInvoiceData(rootView: View, data: InvoiceWithDetails) {
         val invoice = data.invoice
@@ -94,26 +101,63 @@ class InvoiceDetailBottomSheetFragment(
         rootView.findViewById<TextView>(R.id.tv_total_profit).text =
             invoice.tongLoiNhuan.toInt().toVNOnlyK()
 
-        val tvOrderStatus = rootView.findViewById<TextView>(R.id.tv_order_status)
+        val tvStatus = rootView.findViewById<TextView>(R.id.tv_order_status)
 
-        if (invoice.isCompleted) {
-            // 1. Đặt Text
-            tvOrderStatus.text = getString(R.string.action_complete_ship)
-            tvOrderStatus.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.my_light_primary
+        val currentDate = LocalDate.now()
+        val invoiceDate = convertToLocalDate(invoice.date)
+
+        when (invoice.isCompleted) {
+            true -> {
+                tvStatus.text = requireContext()
+                    .getString(R.string.action_complete_ship)
+                tvStatus.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.green_600
+                    )
                 )
-            )
-        } else {
-            // 1. Đặt Text
-            tvOrderStatus.text = getString(R.string.action_wait_ship)
-            tvOrderStatus.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.orange
-                )
-            )
+            }
+            false -> {
+                when {
+                    invoiceDate.isAfter(currentDate) -> { // Chưa đến ngày
+                        tvStatus.text = requireContext()
+                            .getString(R.string.status_not_due_yet)
+                        tvStatus.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.yellow_600
+                            )
+                        )
+                    }
+                    invoiceDate.isEqual(currentDate) -> { // Đến ngày
+                        tvStatus.text = requireContext()
+                            .getString(R.string.status_due_today)
+                        tvStatus.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.orange
+                            )
+                        )
+                    }
+                    invoiceDate.isBefore(currentDate) -> { // Quá hạn
+                        tvStatus.text = requireContext()
+                            .getString(R.string.status_over_due)
+                        tvStatus.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.red_700
+                            )
+                        )
+                    }
+                }
+            }
         }
+
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun convertToLocalDate(date: Date): LocalDate {
+        return date.toInstant()
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
     }
 }

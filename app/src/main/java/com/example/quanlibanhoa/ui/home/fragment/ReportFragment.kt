@@ -1,18 +1,21 @@
 package com.example.quanlibanhoa.ui.home.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.quanlibanhoa.databinding.FragmentReportBinding
-import com.example.quanlibanhoa.ui.home.fragment.expected_invoice.DueTodayFragment
-import com.example.quanlibanhoa.ui.home.fragment.expected_invoice.NotDueYetFragment
-import com.example.quanlibanhoa.ui.home.fragment.expected_invoice.OverdueFragment
+import com.example.quanlibanhoa.ui.home.fragment.report_invoice.MonthlyReportFragment
+import com.example.quanlibanhoa.ui.home.fragment.report_invoice.TodayReportFragment
+import com.example.quanlibanhoa.ui.home.fragment.report_invoice.WeeklyReportFragment
+import com.example.quanlibanhoa.ui.home.fragment.report_invoice.YearlyReportFragment
 import com.google.android.material.tabs.TabLayoutMediator
+import java.lang.reflect.Field
 
 
 class ReportFragment : Fragment() {
@@ -42,7 +45,6 @@ class ReportFragment : Fragment() {
         if (binding.viewPagerHistory.adapter == null) {
             val adapter = ViewPagerExceptedInvoiceAdapter(requireActivity())
             binding.viewPagerHistory.adapter = adapter
-            binding.viewPagerHistory.isUserInputEnabled = false
             // nối tab layout với viewpager2
             TabLayoutMediator(
                 binding.tabLayoutReportInvoice,
@@ -57,6 +59,23 @@ class ReportFragment : Fragment() {
                 }
             }.attach()
             binding.viewPagerHistory.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            reduceSwipeSensitivity(binding.viewPagerHistory, factor = 4)
+        }
+    }
+    fun reduceSwipeSensitivity(viewPager2: ViewPager2, factor: Int = 3) {
+        try {
+            val recyclerViewField: Field = ViewPager2::class.java.getDeclaredField("mRecyclerView")
+            recyclerViewField.isAccessible = true
+            val recyclerView = recyclerViewField.get(viewPager2) as RecyclerView
+
+            val touchSlopField: Field = RecyclerView::class.java.getDeclaredField("mTouchSlop")
+            touchSlopField.isAccessible = true
+            val touchSlop = touchSlopField.get(recyclerView) as Int
+
+            // Giảm độ nhạy bằng cách nhân hệ số
+            touchSlopField.set(recyclerView, touchSlop * factor)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -68,10 +87,10 @@ class ReportFragment : Fragment() {
     class ViewPagerExceptedInvoiceAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                0 -> NotDueYetFragment()
-                1 -> DueTodayFragment()
-                2 -> OverdueFragment()
-                3 -> OverdueFragment()
+                0 -> TodayReportFragment()
+                1 -> WeeklyReportFragment()
+                2 -> MonthlyReportFragment()
+                3 -> YearlyReportFragment()
                 else -> throw IllegalArgumentException("(ExceptedInvoiceFragment) Invalid position")
             }
         }

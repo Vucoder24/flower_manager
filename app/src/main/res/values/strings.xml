@@ -41,5 +41,5 @@
     <string name="status_not_due_yet">Chưa đến ngày giao</string>
     <string name="title_edit_invoice">Sửa Hóa Đơn</string>
     <string name="title_excepted_invoice">Hóa Đơn Dự Kiến</string>
-    <string name="title_report_invoice">Báo Cáo Thống Ke</string>
+    <string name="title_report_invoice">Báo Cáo Thống Kê</string>
 </resources>

@@ -46,16 +46,23 @@
 
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/imgHoa"
+        <androidx.cardview.widget.CardView
             android:layout_width="250dp"
-            android:layout_height="200dp"
+            android:layout_height="188dp"
             android:layout_gravity="center"
-            android:background="@drawable/background_img"
-            android:importantForAccessibility="no"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_photo"
-            tools:ignore="ImageContrastCheck" />
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
+            <ImageView
+                android:id="@+id/imgHoa"
+                android:layout_width="250dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:background="@drawable/background_img"
+                android:importantForAccessibility="no"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_photo"
+                tools:ignore="ImageContrastCheck" />
+        </androidx.cardview.widget.CardView>
 
         <Button
             android:id="@+id/btnPickImage"

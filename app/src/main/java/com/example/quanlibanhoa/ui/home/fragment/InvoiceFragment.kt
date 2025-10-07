@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.quanlibanhoa.databinding.FragmentInvoiceBinding
@@ -14,6 +15,7 @@ import com.example.quanlibanhoa.ui.home.fragment.history_invoice.MonthlyInvoiceF
 import com.example.quanlibanhoa.ui.home.fragment.history_invoice.WeeklyInvoiceFragment
 import com.example.quanlibanhoa.ui.home.fragment.history_invoice.YearlyInvoiceFragment
 import com.google.android.material.tabs.TabLayoutMediator
+import java.lang.reflect.Field
 
 
 class InvoiceFragment : Fragment() {
@@ -53,6 +55,24 @@ class InvoiceFragment : Fragment() {
                 }
             }.attach()
             binding.viewPagerHistory.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            reduceSwipeSensitivity(binding.viewPagerHistory, factor = 4)
+        }
+    }
+
+    fun reduceSwipeSensitivity(viewPager2: ViewPager2, factor: Int = 3) {
+        try {
+            val recyclerViewField: Field = ViewPager2::class.java.getDeclaredField("mRecyclerView")
+            recyclerViewField.isAccessible = true
+            val recyclerView = recyclerViewField.get(viewPager2) as RecyclerView
+
+            val touchSlopField: Field = RecyclerView::class.java.getDeclaredField("mTouchSlop")
+            touchSlopField.isAccessible = true
+            val touchSlop = touchSlopField.get(recyclerView) as Int
+
+            // Giảm độ nhạy bằng cách nhân hệ số
+            touchSlopField.set(recyclerView, touchSlop * factor)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
