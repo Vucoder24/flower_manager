@@ -31,4 +31,8 @@ interface InvoiceDao {
     @Transaction
     @Query("UPDATE invoices SET isCompleted = :isCompleted WHERE id = :id")
     suspend fun updateIsCompleted(id: Int, isCompleted: Boolean)
+
+    @Transaction
+    @Query("SELECT * FROM invoices WHERE  isCompleted = 0")
+    suspend fun getAllPendingInvoices(): List<Invoice>
 }

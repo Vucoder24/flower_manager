@@ -116,7 +116,7 @@ class OverdueFragment : Fragment() {
             adapter.submitList(filteredInvoices)
         }
         // 🔥 THEO DÕI TRẠNG THÁI XÓA (Cần có StateInvoice tương ứng trong ViewModel)
-        invoiceViewModel.deleteInvoiceState5.observe(viewLifecycleOwner) { result ->
+        invoiceViewModel.deleteInvoiceState7.observe(viewLifecycleOwner) { result ->
             if (result == StateInvoice.IDLE) return@observe
             binding.btnConfirmDelete.isEnabled = true
             binding.btnConfirmDelete.alpha = 1f
@@ -127,7 +127,7 @@ class OverdueFragment : Fragment() {
                         "Xóa hóa đơn thành công.",
                         Toast.LENGTH_SHORT
                     ).show()
-                    invoiceViewModel.resetDeleteState(5)
+                    invoiceViewModel.resetDeleteState(7)
                 }
 
                 StateInvoice.DELETE_INVOICE_ERROR -> {
@@ -136,7 +136,7 @@ class OverdueFragment : Fragment() {
                         "Lỗi khi xóa hóa đơn, vui lòng thử lại!",
                         Toast.LENGTH_SHORT
                     ).show()
-                    invoiceViewModel.resetDeleteState(5)
+                    invoiceViewModel.resetDeleteState(7)
                 }
 
                 else -> {}
@@ -178,7 +178,7 @@ class OverdueFragment : Fragment() {
                 //GỌI HÀM XÓA TRONG VIEWMODEL
                 binding.btnConfirmDelete.isEnabled = false
                 binding.btnConfirmDelete.alpha = 0.8f
-                invoiceViewModel.deleteInvoicesByIds(invoiceIds, 5)
+                invoiceViewModel.deleteInvoicesByIds(invoiceIds, 7)
                 adapter.clearSelection()
             }
             .setNegativeButton("Hủy", null)

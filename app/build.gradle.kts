@@ -65,6 +65,10 @@ dependencies {
     // Material
     implementation("com.google.android.material:material:1.13.0")
 
+    // Notification và Alarm
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.work:work-runtime-ktx:2.10.5")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
