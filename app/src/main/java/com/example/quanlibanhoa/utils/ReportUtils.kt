@@ -70,10 +70,11 @@ object ReportUtils {
 
     fun calculateSummary(invoices: List<InvoiceWithDetails>): ReportSummary {
         val totalInvoices = invoices.size
-        val totalRevenue = invoices.sumOf { it.invoice.tongTienThu }
-        val totalProfit = invoices.sumOf { it.invoice.tongLoiNhuan }
-        val totalDiscount = invoices.sumOf { it.invoice.giamGia }
-        val totalQuantity = invoices.sumOf { it.invoice.tongSoLuong }
+        val completed = invoices.filter { it.invoice.isCompleted }
+        val totalRevenue = completed.sumOf { it.invoice.tongTienThu }
+        val totalProfit = completed.sumOf { it.invoice.tongLoiNhuan }
+        val totalDiscount = completed.sumOf { it.invoice.giamGia }
+        val totalQuantity = completed.sumOf { it.invoice.tongSoLuong }
         val totalUncompleted = invoices.count { !it.invoice.isCompleted }
 
         return ReportSummary(
@@ -97,24 +98,15 @@ object ReportUtils {
 
         val flowerMap = HashMap<String, FlowerStats>() // tênHoa -> thống kê
 
-        invoices.flatMap { it.details }.forEach { detail ->
-            val current = flowerMap[detail.tenHoa]
-            if (current == null) {
-                // Nếu chưa có thì thêm mới
-                flowerMap[detail.tenHoa] = FlowerStats(
-                    imageUrl = detail.hinhAnh,
-                    totalQuantity = detail.soLuong,
-                    totalRevenue = detail.soLuong * detail.giaBan
-                )
-            } else {
-                // Nếu đã có thì cộng dồn
+        invoices.filter { it.invoice.isCompleted }
+            .flatMap { it.details }.forEach { detail ->
+                val current = flowerMap.getOrPut(detail.tenHoa) {
+                    FlowerStats(detail.hinhAnh, 0, 0.0)
+                }
                 current.totalQuantity += detail.soLuong
                 current.totalRevenue += detail.soLuong * detail.giaBan
-                // Nếu trước đó chưa có ảnh mà bây giờ có thì cập nhật
-                if (current.imageUrl == null && detail.hinhAnh != null) {
+                if (current.imageUrl == null && detail.hinhAnh != null)
                     current.imageUrl = detail.hinhAnh
-                }
-            }
         }
 
         return flowerMap.entries
@@ -136,7 +128,8 @@ object ReportUtils {
     fun getTopCustomers(invoices: List<InvoiceWithDetails>): List<TopCustomer> {
         val customerMap = HashMap<String, Pair<Double, Int>>() // tênKhách -> (tổngChi, tổngSL)
 
-        invoices.forEach { inv ->
+        invoices.filter { it.invoice.isCompleted }
+            .forEach { inv ->
             val current = customerMap[inv.invoice.tenKhach]
             val newSpent = (current?.first ?: 0.0) + inv.invoice.tongTienThu
             val newFlowers = (current?.second ?: 0) + inv.invoice.tongSoLuong

@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:scrollbars="none"
     android:layout_marginBottom="58dp"
+    android:id="@+id/scrollViewAddFlower"
     tools:context=".ui.home.fragment.AddFlowerFragment">
 
     <LinearLayout

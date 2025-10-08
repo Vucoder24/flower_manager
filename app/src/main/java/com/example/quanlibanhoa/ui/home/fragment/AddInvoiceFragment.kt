@@ -96,6 +96,7 @@ class AddInvoiceFragment : Fragment() {
         observerData()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("NotifyDataSetChanged")
     private fun observerData() {
         // lấy ds hoa
@@ -293,12 +294,19 @@ class AddInvoiceFragment : Fragment() {
         binding.txtTotalProfit.text = "\uD83D\uDCB0 Tổng lợi nhuận: ${totalProfit.toInt().toVNOnlyK()}"
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     private fun clearForm() {
+        binding.scrollViewAddInvoice.scrollTo(0,0)
         binding.edtCustomerName.setText("")
         binding.edtCustomerPhone.setText("")
         binding.edtCustomerAddress.setText("")
         binding.edtSale.setText("")
+        // set default date
+        val myFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val selectedDate = LocalDate.now()
+
+        binding.edtDateInvoice.setText(selectedDate.format(myFormat))
         // reset summaries
         totalQty = 0
         totalIncome = 0.0

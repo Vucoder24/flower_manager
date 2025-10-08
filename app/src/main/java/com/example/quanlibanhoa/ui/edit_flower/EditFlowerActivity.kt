@@ -70,7 +70,7 @@ class EditFlowerActivity : AppCompatActivity() {
                 StateFlower.EDIT_FLOWER_SUCCESS -> {
                     Toast.makeText(
                         applicationContext,
-                        "Sửa thành công.",
+                        "Cập nhật hoa thành công.",
                         Toast.LENGTH_SHORT
                     ).show()
                     flowerViewModel.resetEditState()
@@ -81,7 +81,7 @@ class EditFlowerActivity : AppCompatActivity() {
                 StateFlower.EDIT_FLOWER_ERROR -> {
                     Toast.makeText(
                         applicationContext,
-                        "Có lỗi khi sửa hoa, vui lòng thử lại!",
+                        "Có lỗi khi cập nhật hoa, vui lòng thử lại!",
                         Toast.LENGTH_SHORT
                     ).show()
                     flowerViewModel.resetEditState()

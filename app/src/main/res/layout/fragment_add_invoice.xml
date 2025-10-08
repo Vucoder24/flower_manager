@@ -8,6 +8,7 @@
     android:paddingEnd="16dp"
     android:paddingStart="16dp"
     android:scrollbars="none"
+    android:id="@+id/scrollViewAddInvoice"
     tools:context=".ui.home.fragment.AddInvoiceFragment">
 
     <LinearLayout

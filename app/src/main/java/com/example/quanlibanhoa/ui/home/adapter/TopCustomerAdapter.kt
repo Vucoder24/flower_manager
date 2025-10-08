@@ -18,6 +18,7 @@ class TopCustomerAdapter(
     inner class TopCustomerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvCustomerName: TextView = view.findViewById(R.id.tvCustomerName)
         val tvTotalTop: TextView = view.findViewById(R.id.tvTotalTop)
+        val tvStt: TextView = view.findViewById(R.id.tvRankNumber)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopCustomerViewHolder {
@@ -32,6 +33,7 @@ class TopCustomerAdapter(
     override fun onBindViewHolder(holder: TopCustomerViewHolder, position: Int) {
         val item = customers[position]
 
+        holder.tvStt.text = "${position + 1}"
         holder.tvCustomerName.text = item.name
         holder.tvTotalTop.text = "Tổng chi: ${item.totalSpent.toInt().toVNOnlyK()} " +
                 "| Đã mua: ${item.totalFlowers} bó"

@@ -84,17 +84,16 @@
         tools:visibility="visible">
 
         <Button
-            android:id="@+id/btnConfirmDelete"
-            style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/btnSelectAll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/red_500"
-            android:text="@string/action_delete_selection"
+            android:backgroundTint="@color/my_light_primary"
+            android:text="Chọn tất cả"
             android:textAllCaps="false"
             android:textColor="?attr/colorOnError"
             android:textSize="12sp"
             app:cornerRadius="8dp"
-            tools:ignore="TextContrastCheck" />
+            tools:ignore="ButtonStyle,HardcodedText,TextContrastCheck" />
 
         <Button
             android:id="@+id/btnClearSelection"
@@ -110,13 +109,26 @@
             app:cornerRadius="8dp"
             tools:ignore="ButtonStyle,TextContrastCheck" />
 
+        <Button
+            android:id="@+id/btnConfirmDelete"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/red_500"
+            android:text="@string/action_delete_selection"
+            android:layout_marginStart="6dp"
+            android:textAllCaps="false"
+            android:textColor="?attr/colorOnError"
+            android:textSize="12sp"
+            app:cornerRadius="8dp"
+            tools:ignore="TextContrastCheck" />
+
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ryc_monthly_invoice"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="6dp"
         android:clickable="true"
         android:focusable="true"
         android:nestedScrollingEnabled="true"

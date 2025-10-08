@@ -55,7 +55,7 @@ class AddFlowerFragment : Fragment() {
                 StateFlower.ADD_FLOWER_SUCCESS -> {
                     Toast.makeText(
                         requireContext(),
-                        "Thêm thành công.",
+                        "Thêm hoa thành công.",
                         Toast.LENGTH_SHORT
                     ).show()
                     imagePath = null
@@ -139,6 +139,7 @@ class AddFlowerFragment : Fragment() {
     }
 
     fun clearForm() {
+        binding.scrollViewAddFlower.scrollTo(0,0)
         binding.edtTenHoa.text.clear()
         binding.edtGiaNhap.text.clear()
         binding.edtGiaBan.text.clear()

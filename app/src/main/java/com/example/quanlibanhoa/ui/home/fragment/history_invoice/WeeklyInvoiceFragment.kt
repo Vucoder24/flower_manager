@@ -155,6 +155,9 @@ class WeeklyInvoiceFragment : Fragment() {
         binding.btnClearSelection.setOnClickListener {
             adapter.clearSelection()
         }
+        binding.btnSelectAll.setOnClickListener {
+            adapter.selectAllInvoices()
+        }
 
         binding.btnConfirmDelete.setOnClickListener {
             // Chuyển Set sang List để truyền đi

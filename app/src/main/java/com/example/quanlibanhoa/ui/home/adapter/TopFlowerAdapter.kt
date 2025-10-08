@@ -21,6 +21,7 @@ class TopFlowerAdapter(
         val imgFlower: ImageView = itemView.findViewById(R.id.imgFlowerTop)
         val tvFlowerName: TextView = itemView.findViewById(R.id.tvFlowerNameTop)
         val tvToTalTop: TextView = itemView.findViewById(R.id.tvToTalTop)
+        val tvStt: TextView = itemView.findViewById(R.id.tvFlowerRankNumber)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopFlowerViewHolder {
@@ -35,6 +36,7 @@ class TopFlowerAdapter(
     override fun onBindViewHolder(holder: TopFlowerViewHolder, position: Int) {
         val item = items[position]
 
+        holder.tvStt.text = "${position + 1}"
         holder.tvFlowerName.text = item.name
         holder.tvToTalTop.text = "Đã bán: ${item.totalSold} bông " +
                 "| Doanh thu: ${item.totalRevenue.toInt().toVNOnlyK()}"

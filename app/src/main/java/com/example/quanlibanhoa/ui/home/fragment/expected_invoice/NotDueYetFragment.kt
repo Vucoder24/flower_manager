@@ -190,6 +190,10 @@ class NotDueYetFragment : Fragment() {
             adapter.clearSelection()
         }
 
+        binding.btnSelectAll.setOnClickListener {
+            adapter.selectAllInvoices()
+        }
+
         binding.btnConfirmDelete.setOnClickListener {
             // Chuyển Set sang List để truyền đi
             showDeleteConfirmDialog(adapter.selectedInvoices.toList())

@@ -173,6 +173,16 @@ class InvoiceHistoryAdapter(
             .toLocalDate()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun selectAllInvoices() {
+        if (isMultiSelectMode) {
+            selectedInvoices.clear()
+            selectedInvoices.addAll(currentList)
+            onSelectionCountChanged(selectedInvoices.size)
+            notifyDataSetChanged()
+        }
+    }
+
     fun clearSelection() {
         selectedInvoices.clear()
         setMultiSelectMode(false)

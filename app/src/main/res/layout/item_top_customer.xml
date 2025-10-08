@@ -15,19 +15,47 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:paddingEnd="12dp"
+        android:paddingStart="8dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
 
-        <!-- ✅ Icon bên trái -->
-        <ImageView
-            android:id="@+id/imgCustomerIcon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:importantForAccessibility="no"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_top_user"
+        <LinearLayout
+            android:id="@+id/rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- Huy chương -->
+            <TextView
+                android:id="@+id/tvMedal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🏅"
+                android:textColor="@color/orange"
+                android:textSize="16sp"
+                tools:ignore="HardcodedText,TextContrastCheck" />
+
+            <!-- Số hạng -->
+            <TextView
+                android:id="@+id/tvRankNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="1dp"
+                android:text="1"
+                android:textColor="@color/orange"
+                android:textSize="20sp"
+                android:layout_marginStart="-1dp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText,TextContrastCheck" />
+        </LinearLayout>
+
+
+        <!-- ✅ Icon bên trái -->
 
         <!-- ✅ Giữ nguyên toàn bộ view cũ -->
         <TextView
@@ -40,7 +68,7 @@
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/imgCustomerIcon"
+            app:layout_constraintStart_toEndOf="@+id/rank"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="HardcodedText" />
 

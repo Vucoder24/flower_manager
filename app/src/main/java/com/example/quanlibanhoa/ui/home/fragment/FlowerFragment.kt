@@ -142,6 +142,10 @@ class FlowerFragment : Fragment() {
         // Hiển thị thanh công cụ xóa
         binding.deleteToolbar.visibility = View.VISIBLE
 
+        binding.btnSelectAll.setOnClickListener {
+            adapter.selectAllFlowers()
+        }
+
         // Đảm bảo nút "Bỏ chọn tất cả" gọi hàm clearSelection của Adapter
         binding.btnClearSelection.setOnClickListener {
             adapter.clearSelection()

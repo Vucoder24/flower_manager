@@ -31,6 +31,17 @@ class FlowerListAdapter(
         notifyDataSetChanged()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun selectAllFlowers() {
+        if (isMultiSelectMode) {
+            selectedFlowers.clear()
+            selectedFlowers.addAll(flowers)
+            onSelectionCountChanged(selectedFlowers.size)
+            notifyDataSetChanged()
+        }
+    }
+
+
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val cbSelect: android.widget.CheckBox = view.findViewById(R.id.cbSelect)
         val imgFlower: ImageView = view.findViewById(R.id.imgFlower)
