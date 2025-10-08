@@ -41,6 +41,7 @@ class InvoiceFragment : Fragment() {
         if (binding.viewPagerHistory.adapter == null) {
             val adapter = ViewPagerHistoryInvoiceAdapter(requireActivity())
             binding.viewPagerHistory.adapter = adapter
+            binding.viewPagerHistory.isUserInputEnabled = false
             // nối tab layout với viewpager2
             TabLayoutMediator(
                 binding.tabLayoutHistoryInvoice,

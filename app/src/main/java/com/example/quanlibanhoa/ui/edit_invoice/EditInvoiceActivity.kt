@@ -160,8 +160,6 @@ class EditInvoiceActivity : AppCompatActivity() {
                         "Hóa đơn đã cập nhật!",
                         Toast.LENGTH_SHORT
                     ).show()
-                    selectedFlowers.clear()
-                    adapter.notifyDataSetChanged()
                     invoiceViewModel.resetEditState(0)
                     finish()
                     slideOutActivity()

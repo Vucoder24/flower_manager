@@ -10,9 +10,9 @@ class SwipeToToggleCallback(
 
     companion object {
         // Chỉ dùng THRESHOLD để trigger onSwiped.
-        private const val THRESHOLD_RATIO = 0.3f
+        private const val THRESHOLD_RATIO = 0.6f
 
-        // Bỏ MAX_SWIPE_RATIO và HIGH_VELOCITY_MULTIPLIER
+        // Hệ số giảm độ nhạy
     }
 
     // KHÔNG cần isLocked/isToggled nữa
@@ -43,10 +43,13 @@ class SwipeToToggleCallback(
 
     // Giữ nguyên hoặc bỏ qua các hàm liên quan đến velocity (không cần thiết cho logic này)
     override fun getSwipeEscapeVelocity(defaultValue: Float): Float {
-        return defaultValue
+        // Tăng giá trị này lên rất cao để gần như không thể vượt qua,
+        // buộc ItemTouchHelper phải dùng ngưỡng 0.8f
+        return defaultValue * 1000
     }
 
     override fun getSwipeVelocityThreshold(defaultValue: Float): Float {
+        // Có thể giữ nguyên, hoặc tăng cao để đồng bộ với Escape Velocity
         return defaultValue
     }
 

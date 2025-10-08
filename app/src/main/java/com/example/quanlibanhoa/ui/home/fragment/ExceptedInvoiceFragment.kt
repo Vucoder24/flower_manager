@@ -38,14 +38,14 @@ class ExceptedInvoiceFragment : Fragment() {
     }
 
     private fun setupTabLayoutExceptedInvoice() {
-        if (binding.viewPagerHistory.adapter == null) {
+        if (binding.viewPagerExcepted.adapter == null) {
             val adapter = ViewPagerExceptedInvoiceAdapter(requireActivity())
-            binding.viewPagerHistory.adapter = adapter
-            binding.viewPagerHistory.isUserInputEnabled = false
+            binding.viewPagerExcepted.adapter = adapter
+            binding.viewPagerExcepted.isUserInputEnabled = false
             // nối tab layout với viewpager2
             TabLayoutMediator(
                 binding.tabLayoutExceptedInvoice,
-                binding.viewPagerHistory
+                binding.viewPagerExcepted
             ) { tab, position ->
                 tab.text = when (position) {
                     0 -> "Chưa đến ngày"
@@ -54,7 +54,7 @@ class ExceptedInvoiceFragment : Fragment() {
                     else -> null
                 }
             }.attach()
-            binding.viewPagerHistory.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            binding.viewPagerExcepted.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         }
     }
 

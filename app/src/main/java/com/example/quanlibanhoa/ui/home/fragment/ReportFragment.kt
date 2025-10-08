@@ -42,13 +42,14 @@ class ReportFragment : Fragment() {
     }
 
     private fun setupTabLayoutExceptedInvoice() {
-        if (binding.viewPagerHistory.adapter == null) {
+        if (binding.viewPagerReport.adapter == null) {
             val adapter = ViewPagerExceptedInvoiceAdapter(requireActivity())
-            binding.viewPagerHistory.adapter = adapter
+            binding.viewPagerReport.adapter = adapter
+            binding.viewPagerReport.isUserInputEnabled = false
             // nối tab layout với viewpager2
             TabLayoutMediator(
                 binding.tabLayoutReportInvoice,
-                binding.viewPagerHistory
+                binding.viewPagerReport
             ) { tab, position ->
                 tab.text = when (position) {
                     0 -> "Hôm nay"
@@ -58,8 +59,8 @@ class ReportFragment : Fragment() {
                     else -> null
                 }
             }.attach()
-            binding.viewPagerHistory.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-            reduceSwipeSensitivity(binding.viewPagerHistory, factor = 4)
+            binding.viewPagerReport.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            reduceSwipeSensitivity(binding.viewPagerReport, factor = 4)
         }
     }
     fun reduceSwipeSensitivity(viewPager2: ViewPager2, factor: Int = 3) {
