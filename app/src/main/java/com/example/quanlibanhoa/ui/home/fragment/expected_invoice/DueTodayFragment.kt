@@ -153,6 +153,13 @@ class DueTodayFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
                 invoiceViewModel.resetEditState(1)
+            }else if(it == StateInvoice.EDIT_INVOICE_SUCCESS){
+                Toast.makeText(
+                    requireContext(),
+                    "Đơn hàng đã được hoàn thành.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                invoiceViewModel.resetEditState(1)
             }
         }
     }

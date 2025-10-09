@@ -2,11 +2,13 @@
 package com.example.quanlibanhoa.ui.home
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -32,6 +34,7 @@ import com.example.quanlibanhoa.ui.home.viewmodel.InvoiceViewModel
 import com.example.quanlibanhoa.ui.home.viewmodel.InvoiceViewModelFactory
 import kotlin.getValue
 import androidx.core.content.edit
+import androidx.core.net.toUri
 
 class HomeActivity : AppCompatActivity() {
     // Các khung giờ chính xác bạn muốn kiểm tra (8h)
@@ -92,7 +95,39 @@ class HomeActivity : AppCompatActivity() {
         checkAndRequestExactAlarmPermission()
 
         // Đặt lịch cho tất cả 4 khung giờ
+//        scheduleAllDailyExactReminders()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Kích hoạt việc đặt lịch nếu nó chưa từng được đặt và quyền đã có.
         scheduleAllDailyExactReminders()
+    }
+
+    // Thêm vào HomeActivity
+    @SuppressLint("BatteryLife")
+    private fun checkAndRequestIgnoreBatteryOptimization() {
+        // 1. Lấy PowerManager
+        val powerManager = getSystemService(POWER_SERVICE) as PowerManager
+
+        // 2. Kiểm tra xem ứng dụng có đang bị tối ưu hóa pin không
+        if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+
+            // Hiển thị giải thích trước khi chuyển hướng (tùy chọn)
+            Toast.makeText(
+                this,
+                "Để đảm bảo nhắc nhở hằng ngày hoạt động chính xác khi ứng dụng đóng, vui lòng cho phép ứng dụng 'Không bị hạn chế' pin.",
+                Toast.LENGTH_LONG
+            ).show()
+
+            // 3. Chuyển người dùng đến màn hình cấp quyền
+            val intent = Intent(
+                Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+            ).apply {
+                data = "package:$packageName".toUri()
+            }
+            startActivity(intent)
+        }
     }
 
     private fun handleNotificationPermissions() {
@@ -106,10 +141,12 @@ class HomeActivity : AppCompatActivity() {
             } else {
                 // Nếu đã có quyền POST_NOTIFICATIONS, chuyển sang kiểm tra quyền EXACT_ALARM
                 checkAndRequestExactAlarmPermission()
+                checkAndRequestIgnoreBatteryOptimization()
             }
         } else {
             // Dưới API 33, quyền thông báo mặc định có. Chỉ cần kiểm tra EXACT_ALARM
             checkAndRequestExactAlarmPermission()
+            checkAndRequestIgnoreBatteryOptimization()
         }
     }
 
@@ -160,9 +197,18 @@ class HomeActivity : AppCompatActivity() {
         // Chỉ đặt lịch 1 lần duy nhất khi app chạy
         val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
         val isScheduled = prefs.getBoolean("is_daily_alarm_set", false)
+        val scheduler = AlarmScheduler(applicationContext)
+
 
         if (!isScheduled) {
-            val scheduler = AlarmScheduler(applicationContext)
+            // 2. Phải có quyền Đặt Báo Thức Chính Xác (API 31+)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (!scheduler.canScheduleExactAlarms()) {
+                    // Chưa có quyền, không đặt lịch lần đầu.
+                    // Logic checkAndRequestExactAlarmPermission sẽ lo việc này.
+                    return
+                }
+            }
 
             // Đặt lịch
             EXACT_REMINDER_TIMES.forEach { time ->

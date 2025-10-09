@@ -209,6 +209,11 @@ class InvoiceViewModel(
             try {
                 delay(300L)  // Delay 300ms để snap back xong (có thể chỉnh)
                 repository.updateInvoiceCompleted(invoiceId, !currentState)
+                when(id){
+                    0 -> {_editInvoiceState.postValue(StateInvoice.EDIT_INVOICE_SUCCESS)}
+                    1 -> {_editInvoiceState.postValue(StateInvoice.EDIT_INVOICE_SUCCESS)}
+                    2 -> {_editInvoiceState.postValue(StateInvoice.EDIT_INVOICE_SUCCESS)}
+                }
             } catch (_: Exception) {
                 when(id){
                     0 -> {_editInvoiceState.postValue(StateInvoice.EDIT_INVOICE_ERROR)}

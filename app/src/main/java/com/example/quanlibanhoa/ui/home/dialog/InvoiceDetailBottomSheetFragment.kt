@@ -94,7 +94,7 @@ class InvoiceDetailBottomSheetFragment(
         rootView.findViewById<TextView>(R.id.tv_total_revenue).text =
             invoice.tongTienThu.toInt().toVNOnlyK()
         rootView.findViewById<TextView>(R.id.tv_seller_note).text =
-            "Ghi chú người bán: " + if (!invoice.ghiChu.isNullOrBlank())
+            "Ghi chú: " + if (!invoice.ghiChu.isNullOrBlank())
                 invoice.ghiChu else "Không có"
         rootView.findViewById<TextView>(R.id.tv_payment_method).text =
             invoice.loaiGiaoDich

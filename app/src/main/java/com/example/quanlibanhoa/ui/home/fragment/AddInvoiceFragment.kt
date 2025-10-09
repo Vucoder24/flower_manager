@@ -40,6 +40,8 @@ class AddInvoiceFragment : Fragment() {
     private val selectedFlowers = mutableListOf<Flower>()
 
     private var availableFlowers: List<Flower> = emptyList()
+    @RequiresApi(Build.VERSION_CODES.O)
+    private var selectedDate: LocalDate = LocalDate.now()
 
     // các biến lưu state add hiện tại
     private var totalQty = 0
@@ -140,7 +142,6 @@ class AddInvoiceFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun addEvent() {
         val myFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-        var selectedDate = LocalDate.now()
 
         binding.edtDateInvoice.setText(selectedDate.format(myFormat))
 
@@ -304,7 +305,7 @@ class AddInvoiceFragment : Fragment() {
         binding.edtSale.setText("")
         // set default date
         val myFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-        val selectedDate = LocalDate.now()
+        selectedDate = LocalDate.now()
 
         binding.edtDateInvoice.setText(selectedDate.format(myFormat))
         // reset summaries

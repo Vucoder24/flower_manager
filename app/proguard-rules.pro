@@ -19,3 +19,12 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+# Quy tắc giữ lại các class WorkManager (BẮT BUỘC)
+-dontwarn androidx.work.**
+-keep public class * extends androidx.work.ListenableWorker { *; }
+-keep public class * extends androidx.work.Worker { *; }
+
+# Giữ lại các class liên quan đến Notification/WorkManager Data
+-keep class androidx.work.impl.workers.ConstraintTrackingWorker { *; }
+-keep class androidx.work.impl.workers.DiagnosticsWorker { *; }
+-keep public class androidx.work.Data { *; }

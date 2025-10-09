@@ -36,7 +36,7 @@
     <string name="action_transfer">Chuyển khoản</string>
     <string name="action_wait_ship">Chưa giao</string>
     <string name="action_complete_ship">Đã giao</string>
-    <string name="status_due_today">Đến hạn giao</string>
+    <string name="status_due_today">Hạn giao hôm nay</string>
     <string name="status_over_due">Quá hạn giao</string>
     <string name="status_not_due_yet">Chưa đến ngày giao</string>
     <string name="title_edit_invoice">Sửa Hóa Đơn</string>
