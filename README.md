@@ -26,13 +26,13 @@ Một ứng dụng di động **Android Native** toàn diện, được thiết 
 
 Đây là các màn hình chính của ứng dụng:
 
-| Thêm Hóa Đơn | Danh Sách Hoa | Lịch Sử Hóa Đơn |
+| Danh Sách Hoa | Thêm Hoa | Thêm Hóa Đơn |
 | :---: | :---: | :---: |
-| <img width="250" height="600" alt="image" src="https://github.com/user-attachments/assets/65029831-38e4-4b49-b92c-ac65915e20ce" />  | <img width="250" height="600" alt="image" src="https://github.com/user-attachments/assets/4c589e01-dd58-4ae7-ba89-c9634187eaef" />  |  <img width="250" height="600" alt="image" src="https://github.com/user-attachments/assets/737e9604-b0c8-4a53-80ea-a91830016279" />  |
+| <img width="250" height="600" alt="image" src="https://github.com/user-attachments/assets/4c589e01-dd58-4ae7-ba89-c9634187eaef" /> | <img width="250" height="600" alt="image" src="https://github.com/user-attachments/assets/7a75a678-48ae-45e3-be56-0c4d38c1292d" />  |  <img width="250" height="600" alt="image" src="https://github.com/user-attachments/assets/65029831-38e4-4b49-b92c-ac65915e20ce" />  |
 
-| Báo Cáo Thống Kê | Hóa Đơn Dự Kiến | Thêm Hoa |
+| Hóa Đơn Dự Kiến | Lịch Sử Hóa Đơn | Báo Cáo Thống Kê |
 | :---: | :---: | :---: |
-| <img width="250" height="600" alt="image" src="https://github.com/user-attachments/assets/63e80cf0-eeb5-4849-bb21-cfb675333e25" />  |  <img width="250" height="600" alt="image" src="https://github.com/user-attachments/assets/e69ce0df-9867-4b2e-8e82-a6879c8f8e62" />  | <img width="250" height="600" alt="image" src="https://github.com/user-attachments/assets/7a75a678-48ae-45e3-be56-0c4d38c1292d" />  |
+| <img width="250" height="600" alt="image" src="https://github.com/user-attachments/assets/e69ce0df-9867-4b2e-8e82-a6879c8f8e62" />  |  <img width="250" height="600" alt="image" src="https://github.com/user-attachments/assets/737e9604-b0c8-4a53-80ea-a91830016279" />  |  <img width="250" height="600" alt="image" src="https://github.com/user-attachments/assets/63e80cf0-eeb5-4849-bb21-cfb675333e25" />  |
 
 
 ---
